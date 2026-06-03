@@ -1,0 +1,91 @@
+import { useState, useEffect, useRef } from "react";
+import {
+  Flame, Trophy, Wallet, TrendingDown, Heart, Star,
+  CheckCircle2, Circle, ChevronRight, Sparkles, Send,
+  BarChart2, BookOpen, Moon, Sun, Zap, ShieldCheck,
+  ArrowUpRight, ArrowDownRight, Bell, Settings, User,
+  MessageSquare, Coffee, ShoppingBag, Briefcase, Utensils,
+  AlertTriangle, CheckCheck, Clock, Target, Activity,
+  TrendingUp, DollarSign, PieChart, RefreshCw, ChevronDown
+} from "lucide-react";
+
+// ─── Radial Progress Ring ─────────────────────────────────────────────────────
+function RadialRing({ value = 72, max = 100, size = 88, stroke = 7, color = "#EC4899" }) {
+  const r = (size - stroke * 2) / 2;
+  const circ = 2 * Math.PI * r;
+  const filled = (value / max) * circ;
+  const cx = size / 2, cy = size / 2;
+  return (
+    <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#FCE7F3" strokeWidth={stroke} />
+      <circle
+        cx={cx} cy={cy} r={r} fill="none"
+        stroke={color} strokeWidth={stroke}
+        strokeDasharray={`${filled} ${circ}`}
+        strokeLinecap="round"
+        style={{ transition: "stroke-dasharray 1.2s cubic-bezier(.4,0,.2,1)" }}
+      />
+    </svg>
+  );
+}
+
+// ─── Animated Progress Bar ────────────────────────────────────────────────────
+function ProgressBar({ value, max, color = "#F472B6", animate = true }) {
+  const pct = Math.min((value / max) * 100, 100);
+  return (
+    <div className="h-1.5 rounded-full bg-rose-50 overflow-hidden flex-1">
+      <div
+        className="h-full rounded-full transition-all duration-1000 ease-out"
+        style={{ width: `${pct}%`, background: color }}
+      />
+    </div>
+  );
+}
+
+// ─── Badge ─────────────────────────
+<truncated 33100 bytes>
+div>
+              )}
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* Quick chips */}
+            <div className="flex flex-wrap gap-1.5 mb-3">
+              {quickChips.map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => setAiInput(chip)}
+                  className="chip text-[10.5px] text-slate-300 px-2.5 py-1 rounded-full font-medium"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+
+            {/* Input */}
+            <div className="flex items-center gap-2 bg-white/8 border border-white/12 rounded-xl px-3 py-2">
+              <input
+                value={aiInput}
+                onChange={(e) => setAiInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                placeholder="Tanya tips keuangan syariah..."
+                className="flex-1 bg-transparent text-[12.5px] text-white placeholder-slate-500 outline-none"
+              />
+              <button
+                onClick={sendMessage}
+                disabled={!aiInput.trim()}
+                className="w-7 h-7 rounded-lg flex items-center justify-center transition-all disabled:opacity-40"
+                style={{ background: aiInput.trim() ? "linear-gradient(135deg, #F472B6, #7C3AED)" : "rgba(255,255,255,0.1)" }}
+              >
+                <Send size={12} className="text-white" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer spacer */}
+      <div className="h-8" />
+    </div>
+  );
+}

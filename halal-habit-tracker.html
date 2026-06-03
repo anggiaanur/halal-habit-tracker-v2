@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ibadahku — Ruang Istiqomah Wanita Muslim</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Sacramento&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #FFFBFD;
+    --cream2: #FFF2F7;
+    --rose: #C8647A;
+    --rose-light: #F0A0B0;
+    --rose-bg: #FFF0F4;
+    --border: #F9EBF2;
+    --border2: #FCE2F0;
+    --brown-dark: #5A3645;
+    --brown-mid: #7C4F62;
+    --brown-text: #3D222E;
+    --muted: #A68B98;
+    --sidebar-bg: #FCF4F7;
+    --white: #ffffff;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--cream);
+    background-image: radial-gradient(var(--border) 1.5px, transparent 1.5px);
+    background-size: 18px 18px;
+    color: var(--brown-text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  /* ── LAYOUT ── */
+  .app-wrap {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    min-height: calc(100vh - 80px);
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-shadow: 0 10px 45px rgba(200, 100, 122, 0.08);
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  @media (max-width: 1024px) {
+    .app-wrap {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .main { padding: 32px 32px 48px 36px; border-right: 1px solid var(--border); }
+  .sidebar {
+    padding: 24px 20px;
+    background: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ── HEADER BAR ── */
+  .header-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  .skor-pill {
+    background: var(--rose-bg);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: var(--rose);
+    font-weight: 500;
+  }
+
+  /* ── BRAND ── */
+  .ibadah-brand {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(244, 63, 94, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 4px 25px rgba(244, 63, 94, 0.03);
+  }
+  .ibadah-brand-title {
+    font-family: 'Sacramento', 'Caveat', cursive;
+    font-size: 58px;
+    font-weight: 400;
+    color: var(--rose);
+    letter-spacing: 0;
+    line-height: 1.1;
+  }
+  .ibadah-brand-sub {
+    font-size: 10.5px;
+    letter-spacing: 2.5px;
+    color: var(--muted);
+    margin-top: 7px;
+    text-transform: uppercase;
+  }
+
+  /* ── FASE BAR ── */
+  .fase-bar {
+    background: var(--white);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .fase-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--rose);
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--rose-light);
+  }
+  .fase-label {
+    font-size: 10.5px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .fase-val {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--brown-dark);
+    margin-left: auto;
+  }
+  .fase-select {
+    background: var(--rose-bg);
+    border: 1px solid var(--border2);
+    border-radius: 7px;
+    padding: 4px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--brown-dark);
+    cursor: pointer;
+    margin-left: 8px;
+    outline: none;
+  }
+
+  /* ── HADITH ── */
+  .hadith {
+    background: var(--rose-bg);
+    border-left: 3px solid var(--rose-light);
+    border-radius: 0 8px 8px 0;
+    padding: 13px 18px;
+    margin-bottom: 28px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--brown-dark);
+    line-height: 1.8;
+  }
+  .hadith span {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    font-style: normal;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── OVERVIEW ── */
+  .overview-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .ov-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  .ov-card:hover {
+    border-color: var(--rose-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(200, 100, 122, 0.05);
+  }
+  .ov-ring {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--brown-dark);
+    transition: all 0.3s ease;
+  }
+  .ov-ring.filled { border-color: var(--rose); background: var(--rose-bg); color: var(--rose); }
+  .ov-ring.partial { border-color: var(--rose-light); background: var(--cream2); color: var(--brown-dark); }
+  .ov-ring.empty { border-style: dashed; border-color: var(--muted); color: var(--muted); }
+  .ov-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--brown-dark);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sub-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--brown-dark);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .pts-badge {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  /* ── DATE SELECTOR ── */
+  .date-sel {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .date-sel select {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--brown-mid);
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .date-sel select:focus {
+    border-color: var(--rose-light);
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+  .check-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.15s, transform 0.15s;
+  }
+  .check-item:hover {
+    border-color: var(--rose-light);
+    background: #FFFBFD;
+    transform: translateX(3px);
+  }
+  .check-circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--rose-light);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.15s;
+    color: transparent;
+  }
+  .check-circle.done {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: #fff;
+  }
+  .check-text { flex: 1; }
+  .check-name { font-size: 14px; font-weight: 550; color: var(--brown-text); line-height: 1.4; }
+  .check-cat { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 2.5px; }
+  .check-pts {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--rose);
+    background: var(--rose-bg);
+    padding: 3px 9px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  /* ── SUB SECTION ── */
+  .sub-section { margin-bottom: 28px; }
+
+  /* ── FORM CARDS ── */
+  .form-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 12px;
+    box-shadow: 0 4px 20px rgba(200, 100, 122, 0.02);
+  }
+  .field-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .inp {
+    width: 100%;
+    background: var(--cream2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--brown-text);
+    outline: none;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .inp:focus { border-color: var(--rose-light); background: var(--white); }
+  textarea.inp { resize: vertical; min-height: 90px; line-height: 1.7; }
+  
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .form-single { margin-bottom: 14px; }
+  
+  .btn-primary {
+    background: var(--rose);
+    border: none;
+    border-radius: 9px;
+    padding: 12px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 2px 6px rgba(200, 100, 122, 0.2);
+  }
+  .btn-primary:hover { background: #B35267; }
+  .btn-primary:active { transform: scale(0.99); }
+
+  /* ── RIWAYAT BOX ── */
+  .riwayat-container {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-top: 14px;
+    padding-right: 2px;
+  }
+  .riwayat-container::-webkit-scrollbar {
+    width: 4px;
+  }
+  .riwayat-container::-webkit-scrollbar-thumb {
+    background: var(--rose-light);
+    border-radius: 2px;
+  }
+  .riwayat-box {
+    background: var(--rose-bg);
+    border: 1px solid var(--border2);
+    border-radius: 9px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .riwayat-text { font-size: 13px; color: var(--brown-mid); font-weight: 500; }
+  .riwayat-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .riwayat-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .riwayat-pts {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--rose);
+    background: var(--white);
+    border: 1px solid var(--border2);
+    padding: 3px 9px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .riwayat-delete {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 12px;
+    transition: color 0.2s;
+  }
+  .riwayat-delete:hover { color: var(--rose); }
+
+  /* ── MOOD CHIPS ── */
+  .mood-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .mood-chip {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--cream2);
+    color: var(--brown-mid);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .mood-chip:hover { border-color: var(--rose-light); }
+  .mood-chip.active { background: var(--rose-bg); border-color: var(--rose-light); color: var(--rose); font-weight: bold; }
+
+  /* ── JURNAL PREV ── */
+  .jurnal-prev {
+    background: var(--rose-bg);
+    border: 1px solid var(--border2);
+    border-radius: 9px;
+    padding: 13px 15px;
+    margin-top: 14px;
+    box-shadow: inset 0 1px 3px rgba(200, 100, 122, 0.02);
+  }
+  .jurnal-prev-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+  .jurnal-mood { font-size: 12px; color: var(--rose); font-weight: 600; }
+  .jurnal-date { font-size: 11px; color: var(--muted); }
+  .jurnal-text { font-size: 13px; color: var(--brown-mid); line-height: 1.7; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 15px; }
+
+  /* ── SIDEBAR CARDS ── */
+  .sidebar-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .side-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── WEEKLY ROWS ── */
+  .weekly-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid #F5F0EB;
+  }
+  .weekly-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .weekly-key { font-size: 13px; color: var(--brown-mid); }
+  .weekly-val { font-size: 13px; font-weight: 500; color: var(--brown-dark); }
+  .weekly-val.accent { color: var(--rose); font-weight: 700; }
+
+  /* ── BADGES ── */
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge {
+    background: var(--rose-bg);
+    border: 1px solid var(--border2);
+    border-radius: 9px;
+    padding: 10px 8px;
+    text-align: center;
+    flex: 1;
+    min-width: 56px;
+    transition: all 0.2s;
+  }
+  .badge:hover {
+    border-color: var(--rose-light);
+    transform: scale(1.05);
+  }
+  .badge-icon { font-size: 18px; margin-bottom: 4px; }
+  .badge-name { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; }
+
+  /* ── AI ADVISOR ── */
+  .ai-card {
+    background: linear-gradient(135deg, #FFFDFE 0%, #FFF2F6 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 4px 15px rgba(200, 100, 122, 0.02);
+  }
+  .ai-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ai-text {
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--brown-dark);
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+  }
+  .ai-btn {
+    background: var(--rose);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 14px;
+    width: 100%;
+    transition: background-color 0.2s;
+  }
+  .ai-btn:hover { background: #B35267; }
+
+  /* ── NOTES ── */
+  .notes-card {
+    background: var(--rose-bg);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .notes-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: bold;
+  }
+  .notes-item {
+    font-size: 12.5px;
+    color: var(--brown-mid);
+    line-height: 1.75;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .notes-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .notes-item strong { color: var(--brown-dark); font-weight: 600; display: block; margin-bottom: 2px; }
+
+  .progress-thin {
+    height: 4px;
+    background: var(--cream2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    width: 100%;
+  }
+  .progress-thin-fill {
+    height: 100%;
+    background: var(--rose);
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* ── INTERACTIVE DIGITAL TASBIH & WATER WIDGETS ── */
+  .tasbih-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .tasbih-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tasbih-btn-round {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--rose-light), var(--rose));
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(200, 100, 122, 0.25);
+    transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    user-select: none;
+  }
+  .tasbih-btn-round:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(200, 100, 122, 0.3);
+  }
+  .tasbih-btn-round:active {
+    transform: scale(0.95);
+  }
+
+  .tasbih-reset-btn {
+    background: var(--rose-bg);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 6px 20px;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--rose);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+    outline: none;
+  }
+  .tasbih-reset-btn:hover {
+    background: var(--rose);
+    color: white;
+    border-color: var(--rose);
+  }
+  
+  .water-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .water-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .glass-icon {
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .glass-icon.empty {
+    opacity: 0.25;
+    filter: grayscale(100%);
+  }
+  .glass-icon:hover {
+    transform: scale(1.15);
+  }
+
+  /* ── NEW SIDEBAR DECORATIVE WIDGETS ── */
+  .khatam-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .khatam-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .khatam-btn-small {
+    background: var(--rose-bg);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--rose);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .khatam-btn-small:hover {
+    background: var(--rose-light);
+    color: white;
+  }
+
+  .gratitude-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .gratitude-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--brown-mid);
+    margin-bottom: 8.5px;
+    cursor: pointer;
+    user-select: none;
+    line-height: 1.45;
+  }
+  .gratitude-item:last-child { margin-bottom: 0; }
+  .gratitude-chk {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid var(--rose-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: transparent;
+    flex-shrink: 0;
+  }
+  .gratitude-chk.done {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: white;
+  }
+
+  .sedekah-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .sedekah-reset-btn {
+    background: var(--rose-bg);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--rose);
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+  }
+  .sedekah-reset-btn:hover {
+    background: var(--rose);
+    color: white;
+    border-color: var(--rose);
+  }
+  .sedekah-jar {
+    width: 80px;
+    height: 90px;
+    border: 3px solid var(--rose);
+    border-radius: 15px 15px 30px 30px;
+    margin: 10px auto;
+    position: relative;
+    background: linear-gradient(to top, rgba(200, 100, 122, 0.15) 30%, transparent 30%);
+    transition: background 0.3s ease;
+    overflow: hidden;
+  }
+  .sedekah-lid {
+    width: 50px;
+    height: 12px;
+    background: var(--brown-mid);
+    border-radius: 4px;
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .sedekah-coin {
+    position: absolute;
+    font-size: 16px;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: dropCoin 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  @keyframes dropCoin {
+    0% { top: -20px; opacity: 0; }
+    50% { opacity: 1; }
+    100% { top: 50px; opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-wrap">
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <div class="main">
+
+    <div class="header-bar">
+      <div class="skor-pill" id="skor-label">✦ Skor Halal 72 · Consistent</div>
+    </div>
+
+    <!-- Brand -->
+    <div class="ibadah-brand">
+      <div class="ibadah-brand-title">Ibadahku</div>
+      <div class="ibadah-brand-sub">Ruang Istiqomah Wanita Muslim</div>
+    </div>
+
+    <!-- Fase -->
+    <div class="fase-bar">
+      <div class="fase-dot"></div>
+      <span class="fase-label">Fase Aktif</span>
+      <span class="fase-val">
+        <select class="fase-select" id="fase-select" onchange="changePhase(this.value)">
+          <option value="suci_penuh">✦ Fase Suci Penuh</option>
+          <option value="haid">Fase Haid</option>
+          <option value="nifas">Fase Nifas</option>
+        </select>
+      </span>
+    </div>
+
+    <!-- Hadith -->
+    <div class="hadith" id="hadith-quote">
+      "Sholat yang paling utama di sisi Allah adalah sholat yang dikerjakan pada awal waktunya secara istiqomah."
+      <span id="hadith-narrator">— Hadits Riwayat Bukhari</span>
+    </div>
+
+    <!-- Overview -->
+    <div class="overview-title">Overview Kategori Hari Ini</div>
+    <div class="overview-grid">
+      <div class="ov-card">
+        <div class="ov-ring" id="ring-sholat">—</div>
+        <div class="ov-label">Sholat</div>
+      </div>
+      <div class="ov-card">
+        <div class="ov-ring" id="ring-tilawah">—</div>
+        <div class="ov-label">Tilawah</div>
+      </div>
+      <div class="ov-card">
+        <div class="ov-ring" id="ring-dzikir">—</div>
+        <div class="ov-label">Dzikir</div>
+      </div>
+      <div class="ov-card">
+        <div class="ov-ring" id="ring-sosial">—</div>
+        <div class="ov-label">Sosial</div>
+      </div>
+    </div>
+
+    <!-- Amalan Harian -->
+    <div class="section-title">🌸 Amalan Harian Utama</div>
+    <div class="date-sel">
+      <select id="day-select" onchange="changeDate()">
+        <!-- Filled by JS -->
+      </select>
+      <select id="month-select" onchange="changeDate()">
+        <option value="0">Januari</option>
+        <option value="1">Februari</option>
+        <option value="2">Maret</option>
+        <option value="3">April</option>
+        <option value="4">Mei</option>
+        <option value="5" selected>Juni</option>
+        <option value="6">Juli</option>
+        <option value="7">Agustus</option>
+        <option value="8">September</option>
+        <option value="9">Oktober</option>
+        <option value="10">November</option>
+        <option value="11">Desember</option>
+      </select>
+      <select id="year-select" onchange="changeDate()">
+        <option value="2026" selected>2026</option>
+        <option value="2025">2025</option>
+      </select>
+    </div>
+
+    <div class="progress-thin">
+      <div class="progress-thin-fill" id="amalan-progress-bar"></div>
+    </div>
+
+    <div class="checklist" id="checklist">
+      <!-- Items will be rendered by JS -->
+    </div>
+
+    <!-- Tilawah -->
+    <div class="sub-section">
+      <div class="sub-title">
+        📖 Tilawah Al-Qur'an 
+        <span class="pts-badge" id="tilawah-points-badge">0 / 20 Pts maks</span>
+      </div>
+      <div class="form-card">
+        <div class="form-single">
+          <label class="field-label">Pilih Surah</label>
+          <select class="inp" id="surah-select">
+            <option>Al-Fatihah</option><option>Al-Baqarah</option><option>Ali 'Imran</option>
+            <option>An-Nisa'</option><option>Al-Ma'idah</option><option>Yasin</option>
+            <option>Al-Kahfi</option><option>Ar-Rahman</option><option>Al-Mulk</option>
+            <option>Al-Waqi'ah</option><option>An-Naba'</option><option>Al-Ikhlas</option>
+            <option>Al-Falaq</option><option>An-Nas</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div>
+            <label class="field-label">Mulai Ayat</label>
+            <input class="inp" type="number" id="ayat-mulai" placeholder="Contoh: 1" min="1">
+          </div>
+          <div>
+            <label class="field-label">Sampai Ayat</label>
+            <input class="inp" type="number" id="ayat-sampai" placeholder="Contoh: 10" min="1">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="catatTilawah()">✦ Catat Tilawah</button>
+        
+        <div class="riwayat-container" id="riwayat-tilawah-list">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Mood & Jurnal -->
+    <div class="sub-section">
+      <div class="sub-title">💭 Mood & Jurnal Spiritual</div>
+      <div class="form-card">
+        <label class="field-label">Bagaimana mood-mu hari ini?</label>
+        <div class="mood-chips" id="mood-chips">
+          <div class="mood-chip active" data-mood="🌸 Tenang" onclick="pilihMood(this)">🌸 Tenang</div>
+          <div class="mood-chip" data-mood="✨ Semangat" onclick="pilihMood(this)">✨ Semangat</div>
+          <div class="mood-chip" data-mood="🍃 Lelah" onclick="pilihMood(this)">🍃 Lelah</div>
+          <div class="mood-chip" data-mood="🌧️ Sedih" onclick="pilihMood(this)">🌧️ Sedih</div>
+        </div>
+        <div class="form-single">
+          <label class="field-label">Catatan Jurnal</label>
+          <textarea class="inp" id="jurnal-text" placeholder="Bagaimana kondisi spiritual dan perasaanmu hari ini? Tulis di sini..."></textarea>
+        </div>
+        <button class="btn-primary" onclick="simpanJurnal()">💾 Simpan Jurnal Harian</button>
+        
+        <div id="jurnal-prev-card" style="display: none;">
+          <!-- Displayed dynamically -->
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <div class="sidebar">
+
+    <!-- Laporan Mingguan -->
+    <div class="sidebar-card">
+      <div class="side-title">📊 Laporan Mingguan</div>
+      <div class="weekly-row">
+        <span class="weekly-key">Total Poin Harian</span>
+        <span class="weekly-val accent" id="weekly-total-pts">0 Pts</span>
+      </div>
+      <div class="weekly-row">
+        <span class="weekly-key">Kepatuhan Ibadah</span>
+        <span class="weekly-val" id="weekly-compliance">0%</span>
+      </div>
+      <div class="weekly-row">
+        <span class="weekly-key">Mood Dominan</span>
+        <span class="weekly-val" id="weekly-mood">🌸 Tenang</span>
+      </div>
+      <div class="weekly-row">
+        <span class="weekly-key">Prediksi Siklus</span>
+        <span class="weekly-val">25 Jun 2026</span>
+      </div>
+    </div>
+
+    <!-- Pencapaian -->
+    <div class="sidebar-card">
+      <div class="side-title">🏆 Pencapaian & Badge</div>
+      <div class="badge-row">
+        <div class="badge" title="Mencatat sholat lengkap 5x"><div class="badge-icon">🕌</div><div class="badge-name">Sholat 5x</div></div>
+        <div class="badge" title="Mencatat Quran log harian"><div class="badge-icon">📖</div><div class="badge-name">Tilawah</div></div>
+        <div class="badge" title="Semua amalan utama selesai"><div class="badge-icon">⭐</div><div class="badge-name">Sempurna</div></div>
+        <div class="badge" title="Ibadah 3 hari konsisten"><div class="badge-icon">💎</div><div class="badge-name">Combo</div></div>
+      </div>
+    </div>
+
+    <!-- AI Advisor -->
+    <div class="ai-card">
+      <div class="ai-title">🎀 Analisis AI Advisor ✨</div>
+      <div class="ai-text" id="ai-advisor-text">"Sholat yang paling utama di sisi Allah adalah sholat yang dikerjakan pada awal waktunya secara istiqomah."</div>
+      <button class="ai-btn" onclick="tanyaAI()">Konsultasi AI Advisor →</button>
+    </div>
+
+    <!-- Notes & Reminders -->
+    <div class="notes-card">
+      <div class="notes-title">💖 Notes &amp; Reminders 📝</div>
+      <div class="notes-item">
+        <strong>Jumat Reminder</strong>
+        Jangan lupa potong kuku, mandi sunnah, self grooming, dan perbanyak membaca shalawat sejak Kamis malam.
+      </div>
+      <div class="notes-item">
+        <strong>Self Care Note</strong>
+        Istirahat yang cukup selama hari-hari awal siklus haid, jaga hidrasi tubuh, dan tetap dzikir pagi petang.
+      </div>
+    </div>
+
+    <!-- Tasbih Digital (Interactive Widget) -->
+    <div class="tasbih-card">
+      <div class="tasbih-title">📿 Tasbih Digital 🌸</div>
+      <div class="flex flex-col items-center gap-2.5">
+        <select class="inp text-xs w-full py-1.5" id="tasbih-dhikr-select" onchange="changeDhikr(this.value)">
+          <option value="Subhanallah">Subhanallah</option>
+          <option value="Alhamdulillah">Alhamdulillah</option>
+          <option value="Allahu Akbar">Allahu Akbar</option>
+          <option value="Astagfirullah">Astagfirullah</option>
+          <option value="Shalawat Nabi">Shalawat Nabi</option>
+        </select>
+        
+        <div class="flex flex-col items-center mt-3 mb-1 w-full">
+          <button class="tasbih-btn-round" id="tasbih-counter-btn" onclick="incrementTasbih()">0</button>
+          <button class="tasbih-reset-btn" onclick="resetTasbih()">Reset Counter</button>
+        </div>
+        <span class="text-[10px] text-muted italic mt-2">Simpan otomatis di penyimpanan lokal</span>
+      </div>
+    </div>
+
+    <!-- Water Hydration Tracker (Interactive Widget) -->
+    <div class="water-card">
+      <div class="water-title">💧 Hidrasi Harian 🥛</div>
+      <div class="flex flex-col items-center gap-2">
+        <div class="flex gap-1.5 flex-wrap justify-center" id="water-glasses-row">
+          <!-- Rendered dynamically -->
+        </div>
+        <span class="text-xs font-bold text-brown-mid mt-1" id="water-glasses-label">Kebutuhan: 0 / 8 Gelas</span>
+        <span class="text-[10px] text-muted italic">Target: 2 Liter sehari agar tubuh bugar</span>
+      </div>
+    </div>
+
+    <!-- Target Khatam Qur'an (New Widget) -->
+    <div class="khatam-card">
+      <div class="side-title">📖 Target Khatam Qur'an</div>
+      <div class="flex flex-col gap-2.5 mt-2">
+        <div class="flex justify-between text-xs text-brown-mid">
+          <span>Progress Khatam:</span>
+          <span class="font-bold" id="khatam-progress-label">0%</span>
+        </div>
+        <div class="progress-thin mb-1">
+          <div class="progress-thin-fill" id="khatam-progress-bar" style="width: 0%;"></div>
+        </div>
+        <div class="flex justify-between items-center text-xs text-brown-dark font-medium">
+          <span id="khatam-juz-label">Juz 1 / 30</span>
+          <span id="khatam-page-label">Hal. 1 / 604</span>
+        </div>
+        <div class="khatam-inputs">
+          <div>
+            <label class="text-[9px] text-muted uppercase tracking-wider block mb-1">Set Juz</label>
+            <input type="number" class="inp py-1 text-xs" id="khatam-juz-input" min="1" max="30" value="1" onchange="changeKhatamJuz(this.value)">
+          </div>
+          <div>
+            <label class="text-[9px] text-muted uppercase tracking-wider block mb-1">Set Halaman</label>
+            <input type="number" class="inp py-1 text-xs" id="khatam-page-input" min="1" max="604" value="1" onchange="changeKhatamPage(this.value)">
+          </div>
+        </div>
+        <div class="flex gap-2.5 mt-1">
+          <button class="khatam-btn-small flex-1" onclick="stepKhatamPage(1)">+1 Halaman</button>
+          <button class="khatam-btn-small flex-1" onclick="stepKhatamJuz(1)">+1 Juz</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Gratitude (New Widget) -->
+    <div class="gratitude-card">
+      <div class="side-title">🌸 Daily Gratitude &amp; Little Joys</div>
+      <div class="flex flex-col gap-2 mt-2" id="gratitude-list-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Celengan Sedekah Subuh -->
+    <div class="sedekah-card">
+      <div class="side-title">🪙 Celengan Sedekah Subuh</div>
+      <div class="flex flex-col items-center justify-center flex-grow py-3">
+        <div class="sedekah-jar" id="sedekah-jar-container">
+          <div class="sedekah-lid"></div>
+          <div class="w-full bg-[#C8647A]/35 absolute bottom-0 transition-all duration-300" id="sedekah-jar-fill" style="height: 0%;"></div>
+        </div>
+        <span class="text-xs font-bold text-brown-dark mt-2" id="sedekah-total-label">Terkumpul: Rp 0</span>
+      </div>
+      <div class="flex gap-2.5 w-full mt-2">
+        <button class="btn-primary py-2 text-[11px] flex-1" onclick="addSedekah()">Sedekah Hari Ini 🪙</button>
+        <button class="sedekah-reset-btn" onclick="resetSedekah()">Reset</button>
+      </div>
+    </div>
+
+  </div><!-- /sidebar -->
+
+</div><!-- /app-wrap -->
+
+<script>
+  // ── DATA TEMPLATES PER PHASE ──
+  const amalanTemplates = {
+    suci_penuh: [
+      { id: 's1', nama: 'Sholat Subuh Berjamaah / Tepat Waktu', kat: 'SHOLAT', pts: 5, done: false },
+      { id: 's2', nama: 'Sholat Dzuhur Tepat Waktu', kat: 'SHOLAT', pts: 5, done: false },
+      { id: 's3', nama: 'Sholat Ashar Tepat Waktu', kat: 'SHOLAT', pts: 5, done: false },
+      { id: 's4', nama: 'Sholat Maghrib Berjamaah / Tepat Waktu', kat: 'SHOLAT', pts: 5, done: false },
+      { id: 's5', nama: 'Sholat Isya Tepat Waktu', kat: 'SHOLAT', pts: 5, done: false },
+      { id: 's6', nama: 'Sholat Dhuha', kat: 'SHOLAT', pts: 5, done: false },
+      { id: 's7', nama: 'Dzikir Pagi & Petang', kat: 'DZIKIR', pts: 5, done: false },
+      { id: 's8', nama: 'Sedekah Subuh / Infaq Harian', kat: 'SOSIAL', pts: 10, done: false }
+    ],
+    haid: [
+      { id: 'h1', nama: 'Dzikir Pagi Hari (Alternatif Sholat)', kat: 'DZIKIR', pts: 5, done: false },
+      { id: 'h2', nama: 'Dzikir Petang Hari (Alternatif Sholat)', kat: 'DZIKIR', pts: 5, done: false },
+      { id: 'h3', nama: 'Membaca Buku Fiqih Kewanitaan / Hadits', kat: 'TILAWAH', pts: 10, done: false },
+      { id: 'h4', nama: 'Membaca Shalawat Nabi 100x', kat: 'DZIKIR', pts: 5, done: false },
+      { id: 'h5', nama: 'Mendengarkan Murottal Al-Quran 15 Menit', kat: 'DZIKIR', pts: 5, done: false },
+      { id: 'h6', nama: 'Sedekah Subuh / Infaq Harian', kat: 'SOSIAL', pts: 10, done: false }
+    ],
+    nifas: [
+      { id: 'n1', nama: 'Dzikir Pagi & Petang', kat: 'DZIKIR', pts: 5, done: false },
+      { id: 'n2', nama: 'Membaca Shalawat Nabi 100x', kat: 'DZIKIR', pts: 5, done: false },
+      { id: 'n3', nama: 'Mendengar Murottal / Kajian Syariah', kat: 'TILAWAH', pts: 5, done: false },
+      { id: 'n4', nama: 'Sedekah Subuh / Infaq Harian', kat: 'SOSIAL', pts: 10, done: false }
+    ]
+  };
+
+  const quotesPerPhase = {
+    suci_penuh: {
+      text: '"Sholat yang paling utama di sisi Allah adalah sholat yang dikerjakan pada awal waktunya secara istiqomah."',
+      narrator: '— Hadits Riwayat Bukhari'
+    },
+    haid: {
+      text: '"Di masa haid, tetaplah dekat dengan Allah melalui dzikir, shalawat, dan sedekah. Ibadah hatimu tidak pernah berhenti."',
+      narrator: '— Hadits Riwayat Bukhari'
+    },
+    nifas: {
+      text: '"Kesucian adalah sebagian dari iman. Bersyukurlah atas pemulihan jasmani dan rohani Anda."',
+      narrator: '— Hadits Riwayat Muslim'
+    }
+  };
+
+  const initialSelfCare = [
+    { id: "sc1", label: "Menjaga Wudhu Sepanjang Hari", checked: false },
+    { id: "sc2", label: "Bersiwak / Menjaga Kebersihan Mulut", checked: false },
+    { id: "sc3", label: "Menggunakan Wangi-Wangian (Sunnah)", checked: false },
+    { id: "sc4", label: "Membaca Doa & Dzikir Sebelum Tidur", checked: false }
+  ];
+
+  // State
+  let currentPhase = 'suci_penuh';
+  let selectedDay = new Date().getDate();
+  let selectedMonth = new Date().getMonth();
+  let selectedYear = new Date().getFullYear();
+
+  let checkedItems = {}; // Keys like 'amalans-2026-5-3'
+  let tilawahLogs = [];   // [{ id, surah, start, end, pts, time, dateKey }]
+  let journalLogs = [];   // [{ id, mood, text, date, dateKey }]
+  let tasbihCount = 0;
+  let selectedDhikr = 'Subhanallah';
+  let waterCount = 0;
+  let khatamCurrentJuz = 1;
+  let khatamCurrentPage = 1;
+  let gratitudeChecks = {};
+  let sedekahCount = 0;
+
+  // Initialize
+  window.onload = function() {
+    // Populate Days
+    const daySelect = document.getElementById('day-select');
+    for (let i = 1; i <= 31; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i;
+      if (i === selectedDay) opt.selected = true;
+      daySelect.appendChild(opt);
+    }
+
+    // Load LocalStorage
+    const savedPhase = localStorage.getItem('ibadah-phase');
+    if (savedPhase) {
+      currentPhase = savedPhase;
+      document.getElementById('fase-select').value = currentPhase;
+    }
+    const savedChecks = localStorage.getItem('ibadah-checked-items');
+    if (savedChecks) checkedItems = JSON.parse(savedChecks);
+
+    const savedTilawah = localStorage.getItem('ibadah-tilawah-logs');
+    if (savedTilawah) tilawahLogs = JSON.parse(savedTilawah);
+
+    const savedJournal = localStorage.getItem('ibadah-journal-logs');
+    if (savedJournal) journalLogs = JSON.parse(savedJournal);
+
+    khatamCurrentJuz = parseInt(localStorage.getItem('khatam-current-juz') || '1');
+    khatamCurrentPage = parseInt(localStorage.getItem('khatam-current-page') || '1');
+
+    changePhase(currentPhase);
+  };
+
+  function getDateKey() {
+    return `ibadah-${selectedYear}-${selectedMonth}-${selectedDay}`;
+  }
+
+  function changePhase(phase) {
+    currentPhase = phase;
+    localStorage.setItem('ibadah-phase', currentPhase);
+
+    // Update Hadith/Quote
+    const quote = quotesPerPhase[currentPhase];
+    document.getElementById('hadith-quote').innerHTML = `${quote.text} <span id="hadith-narrator">${quote.narrator}</span>`;
+    document.getElementById('ai-advisor-text').textContent = quote.text;
+
+    renderChecklist();
+    updateStats();
+  }
+
+  function changeDate() {
+    selectedDay = parseInt(document.getElementById('day-select').value);
+    selectedMonth = parseInt(document.getElementById('month-select').value);
+    selectedYear = parseInt(document.getElementById('year-select').value);
+
+    // Load Tasbih, Water, Self-care and Sedekah
+    const k = getDateKey();
+    tasbihCount = parseInt(localStorage.getItem(`tasbih-${k}`) || '0');
+    selectedDhikr = localStorage.getItem(`dhikr-${k}`) || 'Subhanallah';
+    waterCount = parseInt(localStorage.getItem(`water-${k}`) || '0');
+    sedekahCount = parseInt(localStorage.getItem(`sedekah-${k}`) || '0');
+
+    const savedGratitude = localStorage.getItem(`gratitude-${k}`);
+    gratitudeChecks = savedGratitude ? JSON.parse(savedGratitude) : {};
+
+    document.getElementById('tasbih-dhikr-select').value = selectedDhikr;
+    document.getElementById('tasbih-counter-btn').textContent = tasbihCount;
+
+    renderChecklist();
+    updateStats();
+    renderTilawahLogs();
+    renderJournal();
+    renderWaterGlasses();
+    renderSelfCare();
+    renderSedekah();
+  }
+
+  function getActiveAmalanList() {
+    const defaultList = amalanTemplates[currentPhase] || amalanTemplates.suci_penuh;
+    const k = getDateKey();
+    const savedDayStatus = checkedItems[k] || {};
+
+    return defaultList.map(item => ({
+      ...item,
+      done: savedDayStatus[item.id] !== undefined ? savedDayStatus[item.id] : false
+    }));
+  }
+
+  function renderChecklist() {
+    const list = getActiveAmalanList();
+    const el = document.getElementById('checklist');
+    
+    el.innerHTML = list.map((item, i) => `
+      <div class="check-item" onclick="toggleCheck('${item.id}')">
+        <div class="check-circle ${item.done ? 'done' : ''}">${item.done ? '✓' : ''}</div>
+        <div class="check-text">
+          <div class="check-name">${item.nama}</div>
+          <div class="check-cat">${item.kat}</div>
+        </div>
+        <div class="check-pts">+${item.pts} Pts</div>
+      </div>
+    `).join('');
+  }
+
+  function toggleCheck(itemId) {
+    const k = getDateKey();
+    if (!checkedItems[k]) checkedItems[k] = {};
+    
+    const list = getActiveAmalanList();
+    const targetItem = list.find(item => item.id === itemId);
+    if (targetItem) {
+      checkedItems[k][itemId] = !targetItem.done;
+    }
+    
+    localStorage.setItem('ibadah-checked-items', JSON.stringify(checkedItems));
+    renderChecklist();
+    updateStats();
+  }
+
+  function updateStats() {
+    const activeList = getActiveAmalanList();
+    const k = getDateKey();
+
+    // 1. Amalan Checklist Score
+    const amalanPtsEarned = activeList.filter(item => item.done).reduce((sum, item) => sum + item.pts, 0);
+    const amalanPtsTotal = activeList.reduce((sum, item) => sum + item.pts, 0);
+
+    // 2. Tilawah Score
+    const dayTilawah = tilawahLogs.filter(log => log.dateKey === k);
+    const tilawahPtsEarned = Math.min(20, dayTilawah.reduce((sum, log) => sum + log.pts, 0));
+
+    // Total Daily Points
+    const dailyTotal = amalanPtsEarned + tilawahPtsEarned;
+    const maxTotal = amalanPtsTotal + 20;
+
+    // Progress Bar
+    const progressPct = maxTotal > 0 ? Math.round((dailyTotal / maxTotal) * 100) : 0;
+    document.getElementById('amalan-progress-bar').style.width = `${progressPct}%`;
+    document.getElementById('skor-label').textContent = `✦ Skor Halal ${dailyTotal} · ${dailyTotal >= (maxTotal * 0.7) ? 'Consistent' : 'Perlu Ditingkatkan'}`;
+    document.getElementById('weekly-total-pts').textContent = `${dailyTotal} Pts`;
+
+    // Category Overview Rings
+    // SHOLAT
+    const ringSholat = document.getElementById('ring-sholat');
+    if (currentPhase === 'haid') {
+      ringSholat.textContent = '—';
+      ringSholat.className = 'ov-ring empty';
+    } else {
+      const sholatItems = activeList.filter(item => item.kat === 'SHOLAT');
+      const sholatDone = sholatItems.filter(item => item.done).length;
+      ringSholat.textContent = `${sholatDone}/${sholatItems.length}`;
+      ringSholat.className = sholatDone === sholatItems.length ? 'ov-ring filled' : (sholatDone > 0 ? 'ov-ring partial' : 'ov-ring empty');
+    }
+
+    // TILAWAH
+    const ringTilawah = document.getElementById('ring-tilawah');
+    const tilawahPct = Math.round((tilawahPtsEarned / 20) * 100);
+    ringTilawah.textContent = `${tilawahPct}%`;
+    ringTilawah.className = tilawahPct === 100 ? 'ov-ring filled' : (tilawahPct > 0 ? 'ov-ring partial' : 'ov-ring empty');
+    document.getElementById('tilawah-points-badge').textContent = `${tilawahPtsEarned} / 20 Pts maks`;
+
+    // DZIKIR
+    const ringDzikir = document.getElementById('ring-dzikir');
+    const dzikirItems = activeList.filter(item => item.kat === 'DZIKIR');
+    if (dzikirItems.length > 0) {
+      const dzikirDone = dzikirItems.filter(item => item.done).length;
+      const dzikirPct = Math.round((dzikirDone / dzikirItems.length) * 100);
+      ringDzikir.textContent = `${dzikirPct}%`;
+      ringDzikir.className = dzikirPct === 100 ? 'ov-ring filled' : (dzikirPct > 0 ? 'ov-ring partial' : 'ov-ring empty');
+    } else {
+      ringDzikir.textContent = '—';
+      ringDzikir.className = 'ov-ring empty';
+    }
+
+    // SOSIAL
+    const ringSosial = document.getElementById('ring-sosial');
+    const sosialItems = activeList.filter(item => item.kat === 'SOSIAL');
+    if (sosialItems.length > 0) {
+      const sosialDone = sosialItems.filter(item => item.done).length;
+      const sosialPct = Math.round((sosialDone / sosialItems.length) * 100);
+      ringSosial.textContent = `${sosialPct}%`;
+      ringSosial.className = sosialPct === 100 ? 'ov-ring filled' : (sosialDone > 0 ? 'ov-ring partial' : 'ov-ring empty');
+    } else {
+      ringSosial.textContent = '—';
+      ringSosial.className = 'ov-ring empty';
+    }
+
+    // Weekly Compliance Sidebar
+    const complianceVal = maxTotal > 0 ? Math.round((dailyTotal / maxTotal) * 100) : 0;
+    document.getElementById('weekly-compliance').textContent = `${complianceVal}%`;
+
+    // Weekly Mood
+    const dayJournal = journalLogs.find(j => j.dateKey === k);
+    document.getElementById('weekly-mood').textContent = dayJournal ? dayJournal.mood : '🌸 Tenang';
+
+    // Renders
+    renderWaterGlasses();
+    renderKhatam();
+    renderGratitude();
+    renderSedekah();
+  }
+
+  function pilihMood(el) {
+    document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function catatTilawah() {
+    const surah = document.getElementById('surah-select').value;
+    const mulai = parseInt(document.getElementById('ayat-mulai').value);
+    const sampai = parseInt(document.getElementById('ayat-sampai').value);
+
+    if (isNaN(mulai) || isNaN(sampai) || mulai <= 0 || sampai < mulai) {
+      alert('Lengkapi ayat mulai dan ayat sampai secara valid ya!');
+      return;
+    }
+
+    const count = sampai - mulai + 1;
+    const pts = Math.min(15, 5 + Math.floor(count / 2));
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+
+    const log = {
+      id: Date.now().toString(),
+      surah: surah,
+      start: mulai,
+      end: sampai,
+      pts: pts,
+      time: timeStr,
+      dateKey: getDateKey()
+    };
+
+    tilawahLogs.push(log);
+    localStorage.setItem('ibadah-tilawah-logs', JSON.stringify(tilawahLogs));
+
+    document.getElementById('ayat-mulai').value = '';
+    document.getElementById('ayat-sampai').value = '';
+
+    renderTilawahLogs();
+    updateStats();
+    alert(`✦ Tilawah tercatat!\nQS. ${surah}: ${mulai} – ${sampai}`);
+  }
+
+  function renderTilawahLogs() {
+    const k = getDateKey();
+    const container = document.getElementById('riwayat-tilawah-list');
+    const dayLogs = tilawahLogs.filter(log => log.dateKey === k);
+
+    if (dayLogs.length === 0) {
+      container.innerHTML = `<p style="font-size:12px; color:var(--muted); text-align:center; padding:15px; font-style:italic;">Belum ada tilawah tercatat hari ini.</p>`;
+      return;
+    }
+
+    container.innerHTML = dayLogs.map(log => `
+      <div class="riwayat-box">
+        <div>
+          <div class="riwayat-text">QS. ${log.surah}: ${log.start} – ${log.end}</div>
+          <div class="riwayat-time">${log.time}</div>
+        </div>
+        <div class="riwayat-actions">
+          <div class="riwayat-pts">+${log.pts} Pts</div>
+          <button class="riwayat-delete" onclick="deleteTilawah('${log.id}')" title="Hapus log">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function deleteTilawah(id) {
+    tilawahLogs = tilawahLogs.filter(log => log.id !== id);
+    localStorage.setItem('ibadah-tilawah-logs', JSON.stringify(tilawahLogs));
+    renderTilawahLogs();
+    updateStats();
+  }
+
+  function simpanJurnal() {
+    const mood = document.querySelector('.mood-chip.active')?.dataset.mood || '🌸 Tenang';
+    const text = document.getElementById('jurnal-text').value;
+    
+    if (!text.trim()) {
+      alert('Tulis dulu catatan jurnalnya ya~');
+      return;
+    }
+
+    const k = getDateKey();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const formattedDate = `${selectedDay} ${months[selectedMonth]} ${selectedYear}`;
+
+    // Remove existing journal for today if any
+    journalLogs = journalLogs.filter(j => j.dateKey !== k);
+
+    const log = {
+      id: Date.now().toString(),
+      mood: mood,
+      text: text,
+      date: formattedDate,
+      dateKey: k
+    };
+
+    journalLogs.push(log);
+    localStorage.setItem('ibadah-journal-logs', JSON.stringify(journalLogs));
+
+    document.getElementById('jurnal-text').value = '';
+    renderJournal();
+    updateStats();
+    alert(`✦ Jurnal tersimpan!\nMood: ${mood}\n"${text}"`);
+  }
+
+  function renderJournal() {
+    const k = getDateKey();
+    const log = journalLogs.find(j => j.dateKey === k);
+    const prevCard = document.getElementById('jurnal-prev-card');
+
+    if (log) {
+      prevCard.style.display = 'block';
+      prevCard.innerHTML = `
+        <div class="jurnal-prev">
+          <div class="jurnal-prev-top">
+            <span class="jurnal-mood">${log.mood}</span>
+            <span class="jurnal-date">${log.date}</span>
+          </div>
+          <div class="jurnal-text">"${log.text}"</div>
+        </div>
+      `;
+    } else {
+      prevCard.style.display = 'none';
+    }
+  }
+
+  function tanyaAI() {
+    alert("AI Advisor: Masya Allah, teruslah istiqomah di atas sunnah. Jaga kebersihan hati dan wudhu Anda sepanjang hari!");
+  }
+
+  // Tasbih actions
+  function incrementTasbih() {
+    const k = getDateKey();
+    tasbihCount++;
+    localStorage.setItem(`tasbih-${k}`, tasbihCount);
+    document.getElementById('tasbih-counter-btn').textContent = tasbihCount;
+  }
+
+  function resetTasbih() {
+    const k = getDateKey();
+    tasbihCount = 0;
+    localStorage.setItem(`tasbih-${k}`, '0');
+    document.getElementById('tasbih-counter-btn').textContent = '0';
+  }
+
+  function changeDhikr(val) {
+    const k = getDateKey();
+    selectedDhikr = val;
+    localStorage.setItem(`dhikr-${k}`, val);
+  }
+
+  // Hydration rendering and actions
+  function toggleGlass(idx) {
+    const k = getDateKey();
+    let nextVal = idx + 1;
+    if (waterCount === nextVal) {
+      nextVal = idx;
+    }
+    waterCount = nextVal;
+    localStorage.setItem(`water-${k}`, waterCount);
+    renderWaterGlasses();
+  }
+
+  function renderWaterGlasses() {
+    const row = document.getElementById('water-glasses-row');
+    const label = document.getElementById('water-glasses-label');
+
+    let html = '';
+    for (let i = 0; i < 8; i++) {
+      html += `<span class="glass-icon ${i >= waterCount ? 'empty' : ''}" onclick="toggleGlass(${i})" title="Gelas ${i+1}">🥛</span>`;
+    }
+    row.innerHTML = html;
+    label.textContent = `Kebutuhan: ${waterCount} / 8 Gelas`;
+  }
+
+  // Khatam Actions
+  function changeKhatamJuz(val) {
+    khatamCurrentJuz = Math.max(1, Math.min(30, parseInt(val) || 1));
+    localStorage.setItem('khatam-current-juz', khatamCurrentJuz);
+    renderKhatam();
+  }
+
+  function changeKhatamPage(val) {
+    khatamCurrentPage = Math.max(1, Math.min(604, parseInt(val) || 1));
+    localStorage.setItem('khatam-current-page', khatamCurrentPage);
+    renderKhatam();
+  }
+
+  function stepKhatamPage(step) {
+    khatamCurrentPage = Math.max(1, Math.min(604, khatamCurrentPage + step));
+    localStorage.setItem('khatam-current-page', khatamCurrentPage);
+    document.getElementById('khatam-page-input').value = khatamCurrentPage;
+    renderKhatam();
+  }
+
+  function stepKhatamJuz(step) {
+    khatamCurrentJuz = Math.max(1, Math.min(30, khatamCurrentJuz + step));
+    localStorage.setItem('khatam-current-juz', khatamCurrentJuz);
+    document.getElementById('khatam-juz-input').value = khatamCurrentJuz;
+    renderKhatam();
+  }
+
+  function renderKhatam() {
+    const pct = Math.min(100, Math.round((khatamCurrentPage / 604) * 100));
+    document.getElementById('khatam-progress-label').textContent = `${pct}%`;
+    document.getElementById('khatam-progress-bar').style.width = `${pct}%`;
+    document.getElementById('khatam-juz-label').textContent = `Juz ${khatamCurrentJuz} / 30`;
+    document.getElementById('khatam-page-label').textContent = `Hal. ${khatamCurrentPage} / 604`;
+    document.getElementById('khatam-juz-input').value = khatamCurrentJuz;
+    document.getElementById('khatam-page-input').value = khatamCurrentPage;
+  }
+
+  // Gratitude Templates
+  const gratitudeTemplates = [
+    { id: 'g1', label: 'Mental health aman & hati adem (inner peace is real) 🧘‍♀️' },
+    { id: 'g2', label: 'Dapet little joy & unexpected blessings hari ini 💌' },
+    { id: 'g3', label: 'Dikasih energy & hidayah buat tetep istiqomah ⚡' },
+    { id: 'g4', label: 'Bisa deep talk lewat sujud & doa yang khusyuk 💫' }
+  ];
+
+  // Gratitude Actions
+  function toggleGratitude(id) {
+    const k = getDateKey();
+    gratitudeChecks[id] = !gratitudeChecks[id];
+    localStorage.setItem(`gratitude-${k}`, JSON.stringify(gratitudeChecks));
+    renderGratitude();
+  }
+
+  function renderGratitude() {
+    const container = document.getElementById('gratitude-list-container');
+    if (!container) return;
+    container.innerHTML = gratitudeTemplates.map(item => {
+      const done = gratitudeChecks[item.id] || false;
+      return `
+        <div class="gratitude-item" onclick="toggleGratitude('${item.id}')">
+          <div class="gratitude-chk ${done ? 'done' : ''}">✓</div>
+          <span>${item.label}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Sedekah actions
+  function addSedekah() {
+    const k = getDateKey();
+    sedekahCount++;
+    localStorage.setItem(`sedekah-${k}`, sedekahCount);
+    renderSedekah();
+  }
+
+  function resetSedekah() {
+    const k = getDateKey();
+    sedekahCount = 0;
+    localStorage.setItem(`sedekah-${k}`, '0');
+    renderSedekah();
+  }
+
+  function renderSedekah() {
+    const fill = document.getElementById('sedekah-jar-fill');
+    const label = document.getElementById('sedekah-total-label');
+    
+    fill.style.height = `${Math.min(100, sedekahCount * 10)}%`;
+    label.textContent = `Terkumpul: Rp ${(sedekahCount * 2000).toLocaleString("id-ID")}`;
+  }
+</script>
+
+</body>
+</html>

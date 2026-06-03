@@ -1,0 +1,26 @@
+{
+  "name": "Halal Habit Tracker",
+  "short_name": "HaHaT",
+  "description": "Kelola rezeki dengan amanah & bijaksana — Catat, Pantau & Ibadah Bareng",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12001f",
+  "theme_color": "#E91E8C",
+  "categories": ["finance", "lifestyle"],
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

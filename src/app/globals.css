@@ -1,26 +1,222 @@
 @import "tailwindcss";
 
+/* ── Design Tokens (Tema Coquette - Noora Salon) ────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --pink-50:  #fdf2f8;   /* Soft coquette pink */
+  --pink-100: #fce7f3;
+  --pink-200: #fbcfe8;
+  --pink-300: #f9a8d4;
+  --pink-400: #f472b6;
+  --pink-500: #f43f5e;   /* Rose brand color */
+  --pink-600: #db2777;
+  --pink-700: #be123c;   /* Rose-700 */
+  --pink-800: #9f1239;
+  --pink-900: #881337;   /* Rose-900 */
+
+  --purple-400: #f472b6;
+  --purple-500: #ec4899;
+  --purple-600: #db2777;
+  --purple-900: #881337;
+
+  --bg-dark:    #fdf2f8;   /* Soft pink pastel */
+  --bg-card:    rgba(255, 255, 255, 0.85);  /* Pure white coquette card */
+  --bg-card2:   rgba(253, 242, 248, 0.9);   /* Soft pinkish card */
+  --border:     rgba(251, 113, 133, 0.18);  /* Delicate rose border */
+  --border-lg:  rgba(244, 63, 94, 0.28);   /* Pronounced rose border */
+  --text-main:  #881337;   /* Rose-900 text for elegant coquette contrast */
+  --text-muted: #be123c;   /* Rose-700 text */
+  --text-dim:   #fda4af;   /* Rose-300 text */
+
+  --radius-sm: 0.75rem;
+  --radius-md: 1.5rem;     /* Custom coquette rounder corners */
+  --radius-lg: 2rem;       /* Super round card styling */
+  --radius-xl: 2.5rem;
+
+  --shadow-pink:   0 10px 30px rgba(244, 63, 94, 0.08);
+  --shadow-card:   0 8px 32px rgba(244, 63, 94, 0.05);
+  --glow-pink:     0 0 40px rgba(244, 63, 94, 0.06);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Base Reset ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-dark);
+  background-image: radial-gradient(var(--border) 1.5px, transparent 1.5px);
+  background-size: 18px 18px;
+  background-attachment: fixed;
+  color: var(--text-main);
+  font-family: var(--font-quicksand), "Quicksand", system-ui, sans-serif;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* ── Typography ─────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6, .font-heading, .font-serif {
+  font-family: var(--font-playfair-display), "Playfair Display", serif;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.font-coquette {
+  font-family: var(--font-clicker-script), cursive;
+}
+
+.font-handwriting {
+  font-family: var(--font-great-vibes), cursive;
+}
+
+.font-sans {
+  font-family: var(--font-quicksand), sans-serif;
+}
+
+/* ── Scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(244, 63, 94, 0.2);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(244, 63, 94, 0.4);
+}
+
+/* ── Glass Card ─────────────────────────────────────── */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.glass-card:hover {
+  border-color: var(--border-lg);
+  box-shadow: var(--shadow-card), var(--shadow-pink);
+}
+
+/* ── Pink Gradient Text ─────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #db2777 0%, #f43f5e 50%, #be123c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Pink Button ────────────────────────────────────── */
+.btn-pink {
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  color: white;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(244, 63, 94, 0.2);
+}
+.btn-pink:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 25px rgba(244, 63, 94, 0.35);
+  background: linear-gradient(135deg, #fda4af, #f43f5e);
+}
+.btn-pink:active { transform: translateY(0); }
+
+/* ── Input Style ────────────────────────────────────── */
+.input-pink {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+.input-pink::placeholder { color: var(--text-dim); }
+.input-pink:focus {
+  border-color: rgba(244, 63, 94, 0.45);
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.08);
+}
+
+/* ── Tag Badges ─────────────────────────────────────── */
+.tag-halal   { background: rgba(16,185,129,0.08); color: #047857; border: 1px solid rgba(16,185,129,0.18); }
+.tag-syubhat { background: rgba(245,158,11,0.08);  color: #b45309; border: 1px solid rgba(245,158,11,0.18); }
+.tag-boros   { background: rgba(239,68,68,0.08);   color: #b91c1c; border: 1px solid rgba(239,68,68,0.18); }
+
+/* ── Animations ─────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.04); opacity: 0.8; }
+}
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position: 200% center; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+.animate-fade-in   { animation: fadeInUp 0.5s ease both; }
+.animate-float     { animation: float 3s ease-in-out infinite; }
+.animate-pulse-ring { animation: pulse-ring 2.5s ease-in-out infinite; }
+
+/* ── Streak Dot Chart ───────────────────────────────── */
+.streak-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.streak-dot.done   { background: var(--pink-500); box-shadow: 0 0 6px rgba(244,63,94,0.4); }
+.streak-dot.missed { background: rgba(244, 63, 94, 0.08); }
+
+/* ── Progress Bar ───────────────────────────────────── */
+.progress-bar {
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(244, 63, 94, 0.08);
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--pink-500), var(--purple-500));
+  transition: width 0.5s ease;
+}
+
+/* ── Glow Blob ──────────────────────────────────────── */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+.blob-1 { width: 450px; height: 450px; background: rgba(244,63,94,0.1); top: -100px; left: -100px; }
+.blob-2 { width: 350px; height: 350px; background: rgba(251,113,133,0.08); bottom: -80px; right: -80px; }
+
+/* ── Safe area for iPhone notch ─────────────────────── */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 1rem); }
