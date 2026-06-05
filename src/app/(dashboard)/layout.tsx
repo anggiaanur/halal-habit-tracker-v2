@@ -60,16 +60,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const [showProfile, setShowProfile] = useState(false);
   const [userProfile, setUserProfile] = useState<{ name: string; email: string } | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     const checkUser = async () => {
       const isBypassed = localStorage.getItem("dev_bypass") === "true";
       const hasMockSession = localStorage.getItem("mock_user_session") !== null;
-      if (isBypassed || hasMockSession) return;
+      if (isBypassed || hasMockSession) {
+        setIsCheckingAuth(false);
+        return;
+      }
 
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push("/login");
+      } else {
+        setIsCheckingAuth(false);
       }
     };
     checkUser();
@@ -189,6 +195,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const interval = setInterval(updatePrayerTime, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  if (isCheckingAuth) {
+    return (
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#FFFBFD",
+        fontFamily: "var(--font-quicksand), sans-serif",
+        gap: "16px"
+      }}>
+        <div style={{ animation: "spin 1s linear infinite", width: "40px", height: "40px", border: "4px solid #FBCFDB", borderTop: "4px solid #E11D48", borderRadius: "50%" }}></div>
+        <p style={{ color: "#E11D48", fontWeight: 700, fontSize: "14px", fontFamily: "var(--font-playfair-display), serif" }}>Memuat halaman... 🌸</p>
+        <style>{`
+          @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh flex flex-col font-sans">
