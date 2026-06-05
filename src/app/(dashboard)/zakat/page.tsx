@@ -39,6 +39,14 @@ export default function LaporanKeuanganPage() {
   useEffect(() => {
     setTimeout(() => setMounted(true), 0);
     
+    // Load script dynamically from local public folder on mount
+    if (typeof window !== "undefined" && !(window as Window & { html2pdf?: unknown }).html2pdf) {
+      const script = document.createElement("script");
+      script.src = "/html2pdf.bundle.min.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    
     const loadData = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -190,24 +198,9 @@ export default function LaporanKeuanganPage() {
     if (globalHtml2pdf) {
       runExport(globalHtml2pdf);
     } else {
-      // Load script dynamically from local public folder
-      const script = document.createElement("script");
-      script.src = "/html2pdf.bundle.min.js";
-      script.onload = () => {
-        const loadedHtml2pdf = (window as Window & { html2pdf?: () => Html2PdfExporter }).html2pdf;
-        if (loadedHtml2pdf) {
-          runExport(loadedHtml2pdf);
-        } else {
-          // Fallback to print
-          alert("Gagal memuat ekspor PDF. Membuka dialog cetak browser sebagai alternatif... (Silakan pilih 'Simpan sebagai PDF' / 'Save as PDF' 🌸)");
-          window.print();
-        }
-      };
-      script.onerror = () => {
-        alert("Membuka dialog cetak browser... (Silakan pilih 'Simpan sebagai PDF' / 'Save as PDF' untuk mengunduh laporan 🌸)");
-        window.print();
-      };
-      document.body.appendChild(script);
+      // Direct synchronous print fallback, bypassing browser pop-up blocker
+      alert("Membuka dialog cetak browser... (Silakan pilih 'Simpan sebagai PDF' / 'Save as PDF' untuk menyimpan laporan 🌸)");
+      window.print();
     }
   };
 
