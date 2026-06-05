@@ -1277,7 +1277,15 @@ export default function KeuanganSyariahPage() {
               <div 
                 key={chip.val}
                 className={`filter-chip ${filter === chip.val ? "active" : ""}`}
+                role="button"
+                tabIndex={0}
                 onClick={() => setFilter(chip.val)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setFilter(chip.val);
+                  }
+                }}
               >
                 {chip.label}
               </div>
@@ -1459,8 +1467,17 @@ export default function KeuanganSyariahPage() {
                     <div key={d.id} className={`debt-row-card ${d.settled ? 'settled' : ''}`} style={{ padding: "8px 10px", margin: "6px 0" }}>
                       <div className="flex items-center gap-2">
                         <div 
+                          role="checkbox"
+                          aria-checked={d.settled}
+                          tabIndex={0}
                           className={`debt-checkbox ${d.settled ? 'checked' : ''}`}
                           onClick={() => handleToggleSettleDebt(d.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handleToggleSettleDebt(d.id);
+                            }
+                          }}
                           style={{ width: "16px", height: "16px" }}
                         >
                           {d.settled && <span style={{ fontSize: "9px", fontWeight: "bold" }}>✓</span>}

@@ -1083,7 +1083,15 @@ export default function JurnalSiklusPage() {
                 <div 
                   key={i} 
                   className={`amalan-item ${a.done ? "checked" : ""}`}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => toggleAmalan(i)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      toggleAmalan(i);
+                    }
+                  }}
                 >
                   <div className={`checkbox ${a.done ? "done" : ""}`}>
                     {a.done ? "✓" : ""}

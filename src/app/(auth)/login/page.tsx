@@ -602,9 +602,14 @@ export default function LoginPage() {
               {/* Remember + Forgot */}
               <div style={{ display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "space-between", marginBottom: 22 }}>
                 <label
-                  onClick={() => setRememberMe(!rememberMe)}
                   style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12.5, color: "#78716C", userSelect: "none", fontWeight: 600 }}
                 >
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(!rememberMe)}
+                    style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
+                  />
                   <div style={{ width: 17, height: 17, border: `1.5px solid ${rememberMe ? "#F472B6" : "#F9A8D4"}`, borderRadius: 5, display: "flex", alignItems: "center", justifyContent: "center", background: rememberMe ? "#F472B6" : "white", transition: "all 0.15s", flexShrink: 0 }}>
                     {rememberMe && <Check size={10} strokeWidth={3} className="text-white" />}
                   </div>

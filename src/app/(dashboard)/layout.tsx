@@ -457,7 +457,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <>
                   {/* Invisible backdrop to dismiss when clicking outside */}
                   <div
+                    role="button"
+                    aria-label="Tutup Menu Profil"
+                    tabIndex={-1}
                     onClick={() => setShowProfile(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+                        setShowProfile(false);
+                      }
+                    }}
                     style={{
                       position: "fixed",
                       top: 0,

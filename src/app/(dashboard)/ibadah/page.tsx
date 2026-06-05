@@ -1635,7 +1635,15 @@ export default function AdaptiveIbadahPage() {
               <div 
                 key={item.id} 
                 className="check-item" 
+                role="button"
+                tabIndex={0}
                 onClick={() => toggleAmalan(item.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggleAmalan(item.id);
+                  }
+                }}
               >
                 <div className={`check-circle ${item.checked ? 'done' : ''}`} style={{ color: item.checked ? '#fff' : 'transparent' }}>
                   ✓
@@ -1729,7 +1737,15 @@ export default function AdaptiveIbadahPage() {
                   <div 
                     key={m}
                     className={`mood-chip ${selectedMood === m ? 'active' : ''}`}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setSelectedMood(m)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedMood(m);
+                      }
+                    }}
                   >
                     {m}
                   </div>
@@ -1880,8 +1896,16 @@ export default function AdaptiveIbadahPage() {
                   <span 
                     key={idx} 
                     className={`glass-icon ${idx >= waterCount ? 'empty' : ''}`}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => toggleGlass(idx)}
-                    title={`Klik untuk mengisi ${idx + 1} gelas`}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleGlass(idx);
+                      }
+                    }}
+                    title={`Klik untuk mengisi ${idx + 1} Gelas`}
                   >
                     🥛
                   </span>
@@ -1963,7 +1987,15 @@ export default function AdaptiveIbadahPage() {
                   <div 
                     key={item.id} 
                     className="gratitude-item" 
+                    role="button"
+                    tabIndex={0}
                     onClick={() => toggleGratitude(item.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleGratitude(item.id);
+                      }
+                    }}
                   >
                     <div className={`gratitude-chk ${checked ? 'done' : ''}`}>✓</div>
                     <span>{item.label}</span>
