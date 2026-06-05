@@ -11,8 +11,8 @@ export default function JurnalSiklusPage() {
 
   const [amalans, setAmalans] = useState([
     { name: "Sholat Subuh Berjamaah / Tepat Waktu", cat: "Sholat Fardhu", pts: 5, done: false },
-    { name: "Sholat Dzuhur", cat: "Sholat Fardhu", pts: 5, done: true },
-    { name: "Sholat Ashar", cat: "Sholat Fardhu", pts: 5, done: true },
+    { name: "Sholat Dzuhur", cat: "Sholat Fardhu", pts: 5, done: false },
+    { name: "Sholat Ashar", cat: "Sholat Fardhu", pts: 5, done: false },
     { name: "Sholat Maghrib", cat: "Sholat Fardhu", pts: 5, done: false },
     { name: "Sholat Isya", cat: "Sholat Fardhu", pts: 5, done: false },
     { name: "Membaca Al-Qur'an 1 Halaman", cat: "Amalan Tilawah", pts: 5, done: false },

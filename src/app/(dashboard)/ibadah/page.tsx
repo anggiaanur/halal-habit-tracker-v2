@@ -117,16 +117,12 @@ export default function AdaptiveIbadahPage() {
   const [selectedSurah, setSelectedSurah] = useState("Al-Kahfi");
   const [startAyah, setStartAyah] = useState("");
   const [endAyah, setEndAyah] = useState("");
-  const [tilawahLogs, setTilawahLogs] = useState<TilawahLog[]>([
-    { id: "1", surah: "Al-Kahfi", startAyah: "1", endAyah: "10", points: 10, timestamp: "06:30 WIB", dateKey: "" }
-  ]);
+  const [tilawahLogs, setTilawahLogs] = useState<TilawahLog[]>([]);
 
   // 5. MOOD & JOURNAL STATE
   const [selectedMood, setSelectedMood] = useState("🌸 Tenang");
   const [journalText, setJournalText] = useState("");
-  const [journalLogs, setJournalLogs] = useState<JournalLog[]>([
-    { id: "j1", mood: "🌸 Tenang", text: "Ibadah hari ini terasa sangat damai, bersyukur bisa menyisihkan waktu luang.", date: "2 Jun 2026", dateKey: "" }
-  ]);
+  const [journalLogs, setJournalLogs] = useState<JournalLog[]>([]);
 
   // 6. TASBIH & WATER STATE
   const [tasbihCount, setTasbihCount] = useState(0);

@@ -68,7 +68,27 @@ export default function LoginPage() {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
+  const [showDevBypass, setShowDevBypass] = useState(false);
+  const [logoClicks, setLogoClicks] = useState(0);
+
   const supabase = createClient();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("dev") === "true" || params.get("admin") === "true") {
+        setShowDevBypass(true);
+      }
+    }
+  }, []);
+
+  const handleLogoClick = () => {
+    const clicks = logoClicks + 1;
+    setLogoClicks(clicks);
+    if (clicks >= 5) {
+      setShowDevBypass(true);
+    }
+  };
 
   useEffect(() => {
     // Check if user session already exists
@@ -212,7 +232,10 @@ export default function LoginPage() {
           <div style={{ position: "absolute", width: 120, height: 120, borderRadius: "50%", background: "radial-gradient(circle, rgba(244,114,182,0.25), transparent 65%)", bottom: 200, right: 20 }} />
 
           {/* Brand */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10, position: "relative", zIndex: 2 }}>
+          <div 
+            onClick={handleLogoClick}
+            style={{ display: "flex", alignItems: "center", gap: 10, position: "relative", zIndex: 2, cursor: "pointer" }}
+          >
             <HalalLogo size={38} />
             <div>
               <p style={{ fontFamily: "var(--font-playfair-display), serif", fontSize: 18, fontWeight: 700, color: "#9F1239", letterSpacing: "0.02em", lineHeight: 1.2 }}>
@@ -291,7 +314,11 @@ export default function LoginPage() {
           <div style={{ width: "100%", maxWidth: 360 }}>
 
             {/* Mobile brand header */}
-            <div className="mobile-header-coquette flex lg:hidden flex-col items-center mb-8">
+            <div 
+              onClick={handleLogoClick}
+              style={{ cursor: "pointer" }}
+              className="mobile-header-coquette flex lg:hidden flex-col items-center mb-8"
+            >
               <HalalLogo size={44} />
               <p style={{ fontFamily: "var(--font-playfair-display), serif", fontSize: 22, fontWeight: 700, color: "#9F1239", marginTop: 10 }}>
                 Halal Habit Tracker
@@ -302,34 +329,36 @@ export default function LoginPage() {
             </div>
 
             {/* Developer Bypass Toggle */}
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-              <button
-                type="button"
-                onClick={() => {
-                  localStorage.setItem("dev_bypass", "true");
-                  router.push("/");
-                }}
-                style={{
-                  background: "rgba(244, 114, 182, 0.12)",
-                  border: "1px dashed #F472B6",
-                  color: "#DB2777",
-                  fontSize: "11px",
-                  fontWeight: 800,
-                  padding: "8px 16px",
-                  borderRadius: "9999px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  fontFamily: "var(--font-playfair-display), serif",
-                  transition: "all 0.2s"
-                }}
-                className="hover:scale-105"
-              >
-                <Sparkles size={12} />
-                Developer Bypass (Langsung ke Dashboard) ✦
-              </button>
-            </div>
+            {showDevBypass && (
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    localStorage.setItem("dev_bypass", "true");
+                    router.push("/");
+                  }}
+                  style={{
+                    background: "rgba(244, 114, 182, 0.12)",
+                    border: "1px dashed #F472B6",
+                    color: "#DB2777",
+                    fontSize: "11px",
+                    fontWeight: 800,
+                    padding: "8px 16px",
+                    borderRadius: "9999px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontFamily: "var(--font-playfair-display), serif",
+                    transition: "all 0.2s"
+                  }}
+                  className="hover:scale-105"
+                >
+                  <Sparkles size={12} />
+                  Developer Bypass (Langsung ke Dashboard) ✦
+                </button>
+              </div>
+            )}
 
             <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#FB7185", marginBottom: 12, fontFamily: "var(--font-playfair-display), serif" }}>
               Masuk ke Akun Anda

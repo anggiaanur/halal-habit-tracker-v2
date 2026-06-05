@@ -39,14 +39,7 @@ export default function KeuanganSyariahPage() {
   const [loading, setLoading] = useState(true);
 
   // States
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    { id: 1, desc: "Gaji Bulanan Kerja", amount: 4500000, type: "pemasukan", category: "Gaji", tag: "halal", date: "1 Juni 2026", dateKey: "2026-05-01" },
-    { id: 2, desc: "Beli Makan Siang", amount: 45000, type: "pengeluaran", category: "Makanan", tag: "pokok", date: "1 Juni 2026", dateKey: "2026-06-01" },
-    { id: 3, desc: "Sewa Kosan", amount: 1200000, type: "pengeluaran", category: "Kebutuhan Pokok", tag: "pokok", date: "30 Mei 2026", dateKey: "2026-05-30" },
-    { id: 4, desc: "Langganan Netflix", amount: 186000, type: "pengeluaran", category: "Gaya Hidup", tag: "boros", date: "28 Mei 2026", dateKey: "2026-05-28" },
-    { id: 5, desc: "Belanja Bulanan Makanan", amount: 150000, type: "pengeluaran", category: "Kebutuhan Pokok", tag: "pokok", date: "27 Mei 2026", dateKey: "2026-05-27" },
-    { id: 6, desc: "Hasil Jual Kue", amount: 250000, type: "pemasukan", category: "Hasil Dagang", tag: "halal", date: "27 Mei 2026", dateKey: "2026-05-27" },
-  ]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [desc, setDesc] = useState("");
   const [amount, setAmount] = useState("");
@@ -56,10 +49,7 @@ export default function KeuanganSyariahPage() {
   const [filter, setFilter] = useState("semua");
 
   // Catatan Utang States
-  const [debts, setDebts] = useState<Debt[]>([
-    { id: 1, person: "Salsa (Pinjam Gofood)", amount: 35000, type: "piutang", settled: false, date: "1 Juni 2026" },
-    { id: 2, person: "Uang Kas Kelompok", amount: 50000, type: "utang", settled: false, date: "30 Mei 2026" },
-  ]);
+  const [debts, setDebts] = useState<Debt[]>([]);
   const [debtPerson, setDebtPerson] = useState("");
   const [debtAmount, setDebtAmount] = useState("");
   const [debtType, setDebtType] = useState<"utang" | "piutang">("piutang");
