@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   TrendingUp, TrendingDown, Award, Flame,
@@ -14,43 +14,43 @@ export default function Dashboard() {
 
   // State untuk Pencatatan Siklus Haid
   const [showLogModal, setShowLogModal] = useState(false);
-  const [lastStart, setLastStart] = useState("28 Mei 2026");
+  const [lastStart, setLastStart] = useState("—");
   const [cycleLength, setCycleLength] = useState(28);
   const [periodDuration, setPeriodDuration] = useState(7);
   const [notes, setNotes] = useState("");
-  const [loggedCycles, setLoggedCycles] = useState([
-    { id: 1, start: "28 April 2026", end: "4 Mei 2026", duration: 7, note: "Normal, nyeri hari pertama" },
-    { id: 2, start: "31 Maret 2026", end: "6 April 2026", duration: 6, note: "Lancar, minum teh herbal" }
-  ]);
+  const [loggedCycles, setLoggedCycles] = useState<any[]>([]);
 
   // Date selections state for cycle logger
   const [logDay, setLogDay] = useState("1");
   const [logMonth, setLogMonth] = useState("Juni");
   const [logYear, setLogYear] = useState("2026");
 
+  // Dynamic state for transactions
+  const [transactions, setTransactions] = useState<any[]>([]);
+
+  // State untuk checklist amalan (synced dengan Jurnal Siklus / Jurnal Ibadah)
+  const [checkedAmalans, setCheckedAmalans] = useState<boolean[]>(new Array(10).fill(false));
+
+  // Sholat count and progress
+  const sholatCount = checkedAmalans.slice(0, 5).filter(Boolean).length;
+  const sholatProgressVal = Math.round((sholatCount / 5) * 100);
+
   // Daftar Ibadah Normal (Saat Suci)
   const ibadahNormal = [
-    { name: "Sholat 5 Waktu Wajib", progress: 100, done: true },
-    { name: "Membaca Al-Qur'an (Tilawah)", progress: 60, done: true },
-    { name: "Dzikir Pagi & Petang", progress: 80, done: true },
-    { name: "Sedekah Harian Berkah", progress: 100, done: true },
-    { name: "Sholat Sunnah Rawatib/Tahajjud", progress: 40, done: false },
+    { name: "Sholat 5 Waktu Wajib", progress: sholatProgressVal, done: sholatCount === 5 },
+    { name: "Membaca Al-Qur'an (Tilawah)", progress: checkedAmalans[5] ? 100 : 0, done: !!checkedAmalans[5] },
+    { name: "Dzikir Pagi & Petang", progress: checkedAmalans[6] ? 100 : 0, done: !!checkedAmalans[6] },
+    { name: "Sedekah Harian Berkah", progress: checkedAmalans[9] ? 100 : 0, done: !!checkedAmalans[9] },
+    { name: "Sholat Sunnah Rawatib/Tahajjud", progress: checkedAmalans[7] ? 100 : 0, done: !!checkedAmalans[7] },
   ];
 
   // Daftar Amalan Pengganti (Saat Masa Haid)
   const amalanHaid = [
-    { name: "Dzikir Pagi & Petang", progress: 90, done: true },
-    { name: "Mendengarkan Murottal & Tadabbur", progress: 100, done: true },
-    { name: "Mendengarkan Kajian Ilmu", progress: 50, done: false },
-    { name: "Sedekah Harian Berkah", progress: 100, done: true },
-    { name: "Berdoa & Istighfar Sebelum Tidur", progress: 100, done: true },
-  ];
-
-  const transactions = [
-    { desc: "Beli Vitamin & Suplemen", amount: 85_000, type: "out", tag: "kebutuhan", date: "Hari ini" },
-    { desc: "Gaji Freelance UI Design", amount: 1_500_000, type: "in", tag: "halal", date: "Kemarin" },
-    { desc: "Belanja Pakaian Impulsif", amount: 350_000, type: "out", tag: "boros", date: "28 Mei" },
-    { desc: "Beli Bahan Makanan Mingguan", amount: 120_000, type: "out", tag: "kebutuhan", date: "27 Mei" },
+    { name: "Dzikir Pagi & Petang", progress: checkedAmalans[6] ? 100 : 0, done: !!checkedAmalans[6] },
+    { name: "Mendengarkan Murottal & Tadabbur", progress: checkedAmalans[7] ? 100 : 0, done: !!checkedAmalans[7] },
+    { name: "Mendengarkan Kajian Ilmu", progress: checkedAmalans[8] ? 100 : 0, done: !!checkedAmalans[8] },
+    { name: "Sedekah Harian Berkah", progress: checkedAmalans[9] ? 100 : 0, done: !!checkedAmalans[9] },
+    { name: "Berdoa & Istighfar Sebelum Tidur", progress: checkedAmalans[6] ? 100 : 0, done: !!checkedAmalans[6] },
   ];
 
   const currentIbadahList = isMasaHaid ? amalanHaid : ibadahNormal;
@@ -58,15 +58,141 @@ export default function Dashboard() {
   const fmt = (n: number) =>
     "Rp " + new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(n);
 
-  const scoreValue = isMasaHaid ? 95 : 72; // Haid mode score based on active alternative rewards
+  useEffect(() => {
+    const loadData = async () => {
+      // 1. Check if mock session exists
+      const mockSessionStr = localStorage.getItem("mock_user_session");
+      const isBypassed = localStorage.getItem("dev_bypass") === "true";
+      
+      // Load cycle settings from localStorage
+      const savedStart = localStorage.getItem("siklus-lastPeriodStart");
+      const savedLength = localStorage.getItem("siklus-cycleLength");
+      const savedPeriod = localStorage.getItem("siklus-periodLength");
+      const savedLoggedCycles = localStorage.getItem("siklus-logged-cycles");
+      
+      if (savedStart) setLastStart(`${savedStart} Juni 2026`);
+      if (savedLength) setCycleLength(Number(savedLength));
+      if (savedPeriod) setPeriodDuration(Number(savedPeriod));
+      if (savedLoggedCycles) setLoggedCycles(JSON.parse(savedLoggedCycles));
+      
+      if (!mockSessionStr && !isBypassed) {
+        // Normal Supabase session
+        const { createClient } = require("@/lib/supabase/client");
+        const supabaseClient = createClient();
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+          // Fetch transactions from Supabase
+          const { data: txData } = await supabaseClient
+            .from("syariah_transactions")
+            .select("*")
+            .order("created_at", { ascending: false });
+          if (txData) {
+            setTransactions(txData.map((t: any) => ({
+              desc: t.description,
+              amount: Number(t.amount),
+              type: t.type === "pemasukan" ? "in" : "out",
+              tag: t.tag,
+              date: t.date
+            })));
+          }
+
+          // Fetch cycle state from Supabase
+          const { data: userState } = await supabaseClient
+            .from("syariah_user_states")
+            .select("*")
+            .eq("user_id", user.id)
+            .single();
+          if (userState) {
+            if (userState.period_start_day) setLastStart(`${userState.period_start_day} Juni 2026`);
+            if (userState.cycle_length) setCycleLength(userState.cycle_length);
+            if (userState.period_length) setPeriodDuration(userState.period_length);
+          }
+
+          // Fetch amalan checklist logs from Supabase
+          const { data: logData } = await supabaseClient
+            .from("syariah_ibadah_logs")
+            .select("checked_amalans")
+            .eq("date", "siklus-2026-06-01")
+            .single();
+          if (logData && logData.checked_amalans) {
+            const checkedSet = new Set(logData.checked_amalans);
+            const arr = new Array(10).fill(false).map((_, idx) => checkedSet.has(`amalan-${idx}`));
+            setCheckedAmalans(arr);
+          }
+          return;
+        }
+      }
+      
+      // Fallback to localStorage for transactions
+      const savedTx = localStorage.getItem("syariah-transactions");
+      if (savedTx) {
+        setTransactions(JSON.parse(savedTx).map((t: any) => ({
+          desc: t.desc,
+          amount: t.amount,
+          type: t.type === "pemasukan" ? "in" : "out",
+          tag: t.tag,
+          date: t.date
+        })));
+      }
+
+      // Fallback to localStorage for amalans
+      const savedAmalans = localStorage.getItem("siklus-amalans");
+      if (savedAmalans) {
+        const parsed = JSON.parse(savedAmalans);
+        setCheckedAmalans(parsed.map((a: any) => !!a.done));
+      }
+    };
+    loadData();
+  }, []);
+
+  const totalPemasukan = transactions
+    .filter((tx) => tx.type === "in")
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const totalPengeluaran = transactions
+    .filter((tx) => tx.type === "out")
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const saldo = totalPemasukan - totalPengeluaran;
+  const pengeluaran = totalPengeluaran;
+
+  // Dynamic scoreValue based on active checked amalans
+  const activeAmalans = isMasaHaid 
+    ? [6, 7, 8, 9] 
+    : [0, 1, 2, 3, 4, 5, 6, 7, 9];
+  const activeChecked = activeAmalans.filter(idx => checkedAmalans[idx]).length;
+  const scoreValue = Math.round((activeChecked / activeAmalans.length) * 100);
+
   const circumference = 2 * Math.PI * 52;
   const dashOffset = circumference * (1 - scoreValue / 100);
+
+  // Dynamic Indexes calculations:
+  // 1. Kedisiplinan Finansial (out of 40)
+  const totalTxCount = transactions.length;
+  const borosTxCount = transactions.filter(t => t.tag === 'boros' || t.tag === 'tabzir').length;
+  const kedisiplinanFinansialScore = totalTxCount > 0 
+    ? Number(((totalTxCount - borosTxCount) / totalTxCount * 40).toFixed(1))
+    : 0;
+  const kedisiplinanFinansialPct = totalTxCount > 0 
+    ? ((totalTxCount - borosTxCount) / totalTxCount * 100)
+    : 0;
+
+  // 2. Kepatuhan Transaksi Syariah (out of 30)
+  const syubhatTxCount = transactions.filter(t => t.tag === 'syubhat').length;
+  const kepatuhanSyariahScore = totalTxCount > 0
+    ? Number(((totalTxCount - syubhatTxCount) / totalTxCount * 30).toFixed(1))
+    : 0;
+  const kepatuhanSyariahPct = totalTxCount > 0
+    ? ((totalTxCount - syubhatTxCount) / totalTxCount * 100)
+    : 0;
+
+  // 3. Ketaatan & Istiqomah (out of 30)
+  const ketaatanIstiqomahScore = Number((scoreValue / 100 * 30).toFixed(1));
+  const ketaatanIstiqomahPct = scoreValue;
 
   const handleAddCycleLog = (e: React.FormEvent) => {
     e.preventDefault();
     const formattedDate = `${logDay} ${logMonth} ${logYear}`;
-    
-    // Calculate end date based on duration
     const formattedEndDate = `${Number(logDay) + periodDuration} ${logMonth} ${logYear}`;
 
     const newLog = {
@@ -77,7 +203,9 @@ export default function Dashboard() {
       note: notes || "Tercatat lewat Dashboard"
     };
 
-    setLoggedCycles([newLog, ...loggedCycles]);
+    const updatedCycles = [newLog, ...loggedCycles];
+    setLoggedCycles(updatedCycles);
+    localStorage.setItem("siklus-logged-cycles", JSON.stringify(updatedCycles));
     setLastStart(formattedDate);
     setNotes("");
     setShowLogModal(false);
@@ -208,7 +336,7 @@ export default function Dashboard() {
         {/* Card 1: Saldo */}
         <div className="glass-card" style={{ padding: "24px", borderRadius: "24px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <p className="text-xs font-bold font-serif" style={{ color: "var(--text-muted)" }}>Saldo Bulan Ini</p>
-          <p className="text-2xl font-extrabold font-serif" style={{ color: "var(--text-main)", margin: "4px 0" }}>Rp 3.500.000</p>
+          <p className="text-2xl font-extrabold font-serif" style={{ color: "var(--text-main)", margin: "4px 0" }}>{fmt(saldo)}</p>
           <div>
             <span
               className="text-[10px] font-extrabold px-3 py-1 rounded-full"
@@ -219,7 +347,7 @@ export default function Dashboard() {
               }}
             >
               <TrendingUp size={10} style={{ display: "inline", marginRight: "4px", marginTop: "-2px" }} />
-              +12,5%
+              {transactions.length > 0 ? "+12,5%" : "0%"}
             </span>
           </div>
         </div>
@@ -227,7 +355,7 @@ export default function Dashboard() {
         {/* Card 2: Pengeluaran */}
         <div className="glass-card" style={{ padding: "24px", borderRadius: "24px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <p className="text-xs font-bold font-serif" style={{ color: "var(--text-muted)" }}>Pengeluaran</p>
-          <p className="text-2xl font-extrabold font-serif" style={{ color: "var(--text-main)", margin: "4px 0" }}>Rp 2.100.000</p>
+          <p className="text-2xl font-extrabold font-serif" style={{ color: "var(--text-main)", margin: "4px 0" }}>{fmt(pengeluaran)}</p>
           <div>
             <span
               className="text-[10px] font-extrabold px-3 py-1 rounded-full"
@@ -238,7 +366,7 @@ export default function Dashboard() {
               }}
             >
               <TrendingDown size={10} style={{ display: "inline", marginRight: "4px", marginTop: "-2px" }} />
-              -4,2%
+              {transactions.length > 0 ? "-4,2%" : "0%"}
             </span>
           </div>
         </div>
@@ -251,21 +379,21 @@ export default function Dashboard() {
             <div className="relative flex items-center justify-center w-16 h-16 flex-shrink-0">
               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                 <path className="text-slate-100" strokeWidth="3" stroke="rgba(244,63,94,0.06)" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path className={isMasaHaid ? "text-rose-500" : "text-pink-500"} strokeDasharray={isMasaHaid ? "15, 100" : "72, 100"} strokeWidth="3" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path className={isMasaHaid ? "text-rose-500" : "text-pink-500"} strokeDasharray={`${scoreValue}, 100`} strokeWidth="3" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
               </svg>
               <div className="absolute text-center flex flex-col" style={{ position: "absolute", display: "flex", flexDirection: "column", alignItems: "center", justifyItems: "center", justifyContent: "center" }}>
-                <span className="text-sm font-extrabold text-slate-900">{isMasaHaid ? "H-3" : "72"}</span>
+                <span className="text-sm font-extrabold text-slate-900">{scoreValue}%</span>
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
               <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block">
                 {isMasaHaid ? "Siklus Haid" : "Halal Score"}
               </span>
-              <span className="text-xs font-bold" style={{ color: isMasaHaid ? "#F43F5E" : "var(--pink-600)" }}>
-                {isMasaHaid ? "Fase Menstruasi" : "Good Condition"}
+              <span className="text-xs font-bold" style={{ color: isMasaHaid ? "#F43F5E" : (transactions.length > 0 ? "var(--pink-600)" : "#9c8fa8") }}>
+                {isMasaHaid ? "Fase Menstruasi" : (transactions.length > 0 ? "Good Condition" : "Belum Ada Data")}
               </span>
               <p className="text-[9px] text-slate-400" style={{ lineHeight: "1.2" }}>
-                {isMasaHaid ? "Kalkulasi puasa qadha aktif" : "Kepatuhan pekan ini"}
+                {isMasaHaid ? "Kalkulasi puasa qadha aktif" : (transactions.length > 0 ? "Kepatuhan pekan ini" : "Mulai isi data transaksi")}
               </p>
             </div>
           </div>
@@ -457,17 +585,23 @@ export default function Dashboard() {
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <span className="text-xs font-bold text-slate-500 font-serif">Riwayat 3 Bulan Terakhir 🗓️</span>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "150px", overflowY: "auto" }}>
-              {loggedCycles.map((cycle) => (
-                <div key={cycle.id} style={{ display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "space-between", padding: "10px 14px", background: "rgba(0,0,0,0.01)", border: "1px solid rgba(0,0,0,0.03)", borderRadius: "14px" }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                    <span className="text-xs font-bold text-slate-700 font-serif">{cycle.start} - {cycle.end.split(" ")[0]}</span>
-                    <span className="text-[10px] text-slate-400 italic">{cycle.note}</span>
+              {loggedCycles.length === 0 ? (
+                <p style={{ fontSize: "11px", color: "var(--text-dim)", fontStyle: "italic", textAlign: "center", padding: "20px 0" }}>
+                  Belum ada riwayat siklus tercatat. 🌸
+                </p>
+              ) : (
+                loggedCycles.map((cycle) => (
+                  <div key={cycle.id} style={{ display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "space-between", padding: "10px 14px", background: "rgba(0,0,0,0.01)", border: "1px solid rgba(0,0,0,0.03)", borderRadius: "14px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                      <span className="text-xs font-bold text-slate-700 font-serif">{cycle.start} - {cycle.end.split(" ")[0]}</span>
+                      <span className="text-[10px] text-slate-400 italic">{cycle.note}</span>
+                    </div>
+                    <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-100 shrink-0">
+                      {cycle.duration} Hari
+                    </span>
                   </div>
-                  <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-100 shrink-0">
-                    {cycle.duration} Hari
-                  </span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -588,52 +722,58 @@ export default function Dashboard() {
             </div>
 
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {transactions.map((tx, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "space-between", padding: "14px 0", gap: "16px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                    <div
-                      className="h-10 w-10 rounded-full flex items-center justify-center shrink-0 border"
-                      style={{
-                        background: tx.type === "in"
-                          ? "rgba(16,185,129,0.08)"
-                          : "rgba(244,63,94,0.06)",
-                        borderColor: tx.type === "in"
-                          ? "rgba(16,185,129,0.18)"
-                          : "rgba(244,63,94,0.12)"
-                      }}
-                    >
-                      {tx.type === "in"
-                        ? <TrendingUp className="h-4.5 w-4.5" style={{ color: "#047857" }} />
-                        : <TrendingDown className="h-4.5 w-4.5" style={{ color: "var(--pink-600)" }} />
-                      }
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold font-serif" style={{ color: "var(--text-main)" }}>{tx.desc}</p>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
-                        <span className="text-[10px]" style={{ color: "var(--text-dim)" }}>{tx.date}</span>
-                        <span 
-                          className="text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase"
-                          style={
-                            tx.tag === "halal" 
-                              ? { background: "rgba(16,185,129,0.08)", color: "#047857", border: "1px solid rgba(16,185,129,0.18)" }
-                              : tx.tag === "kebutuhan"
-                              ? { background: "rgba(59,130,246,0.08)", color: "#1d4ed8", border: "1px solid rgba(59,130,246,0.18)" }
-                              : { background: "rgba(244,63,94,0.06)", color: "var(--pink-600)", border: "1px solid rgba(244,63,94,0.15)" }
-                          }
-                        >
-                          {tx.tag}
-                        </span>
+              {transactions.length === 0 ? (
+                <p style={{ fontSize: "12px", color: "var(--text-dim)", textAlign: "center", padding: "32px 0", fontStyle: "italic" }}>
+                  Belum ada transaksi tercatat. Mulai catat transaksi baru! 🌸
+                </p>
+              ) : (
+                transactions.slice(0, 4).map((tx, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "space-between", padding: "14px 0", gap: "16px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                      <div
+                        className="h-10 w-10 rounded-full flex items-center justify-center shrink-0 border"
+                        style={{
+                          background: tx.type === "in"
+                            ? "rgba(16,185,129,0.08)"
+                            : "rgba(244,63,94,0.06)",
+                          borderColor: tx.type === "in"
+                            ? "rgba(16,185,129,0.18)"
+                            : "rgba(244,63,94,0.12)"
+                        }}
+                      >
+                        {tx.type === "in"
+                          ? <TrendingUp className="h-4.5 w-4.5" style={{ color: "#047857" }} />
+                          : <TrendingDown className="h-4.5 w-4.5" style={{ color: "var(--pink-600)" }} />
+                        }
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold font-serif" style={{ color: "var(--text-main)" }}>{tx.desc}</p>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
+                          <span className="text-[10px]" style={{ color: "var(--text-dim)" }}>{tx.date}</span>
+                          <span 
+                            className="text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase"
+                            style={
+                              tx.tag === "halal" 
+                                ? { background: "rgba(16,185,129,0.08)", color: "#047857", border: "1px solid rgba(16,185,129,0.18)" }
+                                : tx.tag === "kebutuhan" || tx.tag === "pokok"
+                                ? { background: "rgba(59,130,246,0.08)", color: "#1d4ed8", border: "1px solid rgba(59,130,246,0.18)" }
+                                : { background: "rgba(244,63,94,0.06)", color: "var(--pink-600)", border: "1px solid rgba(244,63,94,0.15)" }
+                            }
+                          >
+                            {tx.tag === "pokok" ? "Dharuriyyat" : tx.tag === "sekunder" ? "Hajiyyat" : tx.tag === "boros" ? "Tabzir" : tx.tag}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <span
+                      className="text-sm font-extrabold font-serif shrink-0"
+                      style={{ color: tx.type === "in" ? "#047857" : "var(--text-main)" }}
+                    >
+                      {tx.type === "in" ? "+" : "-"}{fmt(tx.amount)}
+                    </span>
                   </div>
-                  <span
-                    className="text-sm font-extrabold font-serif shrink-0"
-                    style={{ color: tx.type === "in" ? "#047857" : "var(--text-main)" }}
-                  >
-                    {tx.type === "in" ? "+" : "-"}{fmt(tx.amount)}
-                  </span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -653,10 +793,10 @@ export default function Dashboard() {
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 700 }}>
                   <span className="text-slate-600">Kedisiplinan Finansial</span>
-                  <span className="text-rose-900">32.5 <span className="text-slate-400">/ 40</span></span>
+                  <span className="text-rose-900">{kedisiplinanFinansialScore} <span className="text-slate-400">/ 40</span></span>
                 </div>
                 <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-gradient-to-r from-pink-400 to-pink-500 h-full rounded-full" style={{ width: "81.25%" }}></div>
+                  <div className="bg-gradient-to-r from-pink-400 to-pink-500 h-full rounded-full" style={{ width: `${kedisiplinanFinansialPct}%` }}></div>
                 </div>
               </div>
 
@@ -664,10 +804,10 @@ export default function Dashboard() {
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 700 }}>
                   <span className="text-slate-600">Kepatuhan Transaksi Syariah</span>
-                  <span className="text-rose-900">20 <span className="text-slate-400">/ 30</span></span>
+                  <span className="text-rose-900">{kepatuhanSyariahScore} <span className="text-slate-400">/ 30</span></span>
                 </div>
                 <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                  <div className="bg-gradient-to-r from-purple-400 to-purple-500 h-full rounded-full" style={{ width: "66.6%" }}></div>
+                  <div className="bg-gradient-to-r from-purple-400 to-purple-500 h-full rounded-full" style={{ width: `${kepatuhanSyariahPct}%` }}></div>
                 </div>
               </div>
 
@@ -675,13 +815,13 @@ export default function Dashboard() {
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 700 }}>
                   <span className="text-slate-600">Ketaatan &amp; Istiqomah</span>
-                  <span className="text-rose-900">{isMasaHaid ? "28.5" : "19.5"} <span className="text-slate-400">/ 30</span></span>
+                  <span className="text-rose-900">{ketaatanIstiqomahScore} <span className="text-slate-400">/ 30</span></span>
                 </div>
                 <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                   <div 
                     className="h-full rounded-full transition-all duration-500" 
                     style={{ 
-                      width: isMasaHaid ? "95%" : "65%",
+                      width: `${ketaatanIstiqomahPct}%`,
                       background: isMasaHaid 
                         ? "linear-gradient(90deg, #F43F5E, #FDA4AF)" 
                         : "linear-gradient(90deg, #2DD4BF, #0D9488)"
@@ -759,7 +899,9 @@ export default function Dashboard() {
               <span className="italic leading-relaxed">
                 {isMasaHaid 
                   ? "“Alhamdulillah, pencatatan siklusmu rapi. Flek kecoklatan yang muncul di luar rentang kebiasaan haid tidak menggugurkan kewajiban ibadah menurut Jumhur Ulama. Tetap istiqomah berdzikir ya! 🌸”"
-                  : "“Hai Sahabat! Alhamdulillah pengeluaran halalmu terjaga di angka 81% minggu ini 💚 Waspadai pengeluaran emosional menjelang siklus bulanan berikutnya agar tabungan qadha puasa dan zakat tetap aman!”"
+                  : transactions.length > 0
+                  ? "“Hai Sahabat! Alhamdulillah pengeluaran halalmu terjaga dengan baik 💚 Waspadai pengeluaran emosional menjelang siklus bulanan berikutnya agar tabungan qadha puasa dan zakat tetap aman!”"
+                  : "“Mulai catat transaksi keuangan syariah dan jurnal ibadahmu untuk mendapatkan analisis Fiqih & Finansial personal di sini! ✦”"
                 }
               </span>
             </blockquote>

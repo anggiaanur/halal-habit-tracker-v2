@@ -302,6 +302,39 @@ export default function KeuanganSyariahPage() {
       localStorage.setItem("syariah-debts", JSON.stringify(nextList));
     }
   };
+
+  const handleClearAllData = async () => {
+    if (!confirm("Apakah Anda yakin ingin menghapus semua data transaksi dan utang bestie? Tindakan ini tidak dapat dibatalkan. 🌸")) {
+      return;
+    }
+    
+    setLoading(true);
+    if (userId) {
+      // Clear from Supabase
+      const { error: txErr } = await supabase
+        .from("syariah_transactions")
+        .delete()
+        .eq("user_id", userId);
+      const { error: debtErr } = await supabase
+        .from("syariah_debts")
+        .delete()
+        .eq("user_id", userId);
+      
+      if (txErr || debtErr) {
+        console.error("Error resetting data:", txErr || debtErr);
+        alert("Gagal menghapus data di cloud database.");
+      }
+    }
+    
+    // Always clear local storage fallback
+    localStorage.removeItem("syariah-transactions");
+    localStorage.removeItem("syariah-debts");
+    setTransactions([]);
+    setDebts([]);
+    setLoading(false);
+    alert("Semua data transaksi dan utang telah berhasil dihapus ke 0! 🌸");
+  };
+
   // Finance calculations
   const totalPemasukanHalal = transactions
     .filter((tx) => tx.type === "pemasukan" && tx.tag === "halal")
@@ -1293,6 +1326,14 @@ export default function KeuanganSyariahPage() {
               <span className="weekly-key">Utang Aktif</span>
               <span className="weekly-val text-rose-500 font-bold">{debts.filter(d => !d.settled).length} catatan</span>
             </div>
+            <button 
+              type="button" 
+              className="cleansing-btn"
+              onClick={handleClearAllData}
+              disabled={loading}
+            >
+              {loading ? "Menghapus..." : "🗑️ Hapus Semua Data"}
+            </button>
           </div>
 
           {/* Nisab Zakat Tracker */}

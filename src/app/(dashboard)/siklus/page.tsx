@@ -166,26 +166,26 @@ export default function JurnalSiklusPage() {
 
   // Dynamic values based on checklist checkboxes:
   const sholatChecked = amalans.slice(0, 5).filter(a => a.done).length;
-  const sholatProgress = Math.round((sholatChecked / 5) * 60) + 40; // 40% - 100%
+  const sholatProgress = Math.round((sholatChecked / 5) * 100);
 
   const quranChecked = amalans[5].done;
-  const quranProgress = quranChecked ? 95 : 40;
+  const quranProgress = quranChecked ? 100 : 0;
 
   const dzikirChecked = amalans[6].done;
-  const dzikirProgress = dzikirChecked ? 92 : 45;
+  const dzikirProgress = dzikirChecked ? 100 : 0;
 
   const murottalChecked = amalans[7].done;
-  const murottalProgress = murottalChecked ? 88 : 35;
+  const murottalProgress = murottalChecked ? 100 : 0;
 
   // Chart data
   const chartDays = [
     { label: 'Sen', pct: progressPersen, haid: getDayType(today) === "haid" },
-    { label: 'Sel', pct: 72, haid: false },
-    { label: 'Rab', pct: 88, haid: false },
-    { label: 'Kam', pct: 60, haid: false },
-    { label: 'Jun', pct: 50, haid: false },
-    { label: 'Sab', pct: 78, haid: false },
-    { label: 'Ahd', pct: 65, haid: false },
+    { label: 'Sel', pct: 0, haid: false },
+    { label: 'Rab', pct: 0, haid: false },
+    { label: 'Kam', pct: 0, haid: false },
+    { label: 'Jun', pct: 0, haid: false },
+    { label: 'Sab', pct: 0, haid: false },
+    { label: 'Ahd', pct: 0, haid: false },
   ];
 
   return (
