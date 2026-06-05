@@ -976,12 +976,55 @@ export default function KeuanganSyariahPage() {
           margin-top: 14px;
           padding-right: 2px;
         }
-        .debt-container::-webkit-scrollbar {
-          width: 4px;
-        }
         .debt-container::-webkit-scrollbar-thumb {
           background: var(--rose-light);
           border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+          .page-container {
+            padding: 4px;
+          }
+          .app-wrap {
+            border-radius: 12px;
+            border: none;
+            box-shadow: none;
+          }
+          .main {
+            padding: 16px 12px;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+          }
+          .sidebar {
+            padding: 16px 12px;
+          }
+          .overview-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+          }
+          .keuangan-brand-title {
+            font-size: 36px !important;
+          }
+          .form-row {
+            grid-template-columns: 1fr;
+            gap: 8px;
+          }
+          .riwayat-box {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 12px;
+          }
+          .riwayat-actions {
+            width: 100%;
+            justify-content: space-between;
+            border-top: 1px dashed rgba(200, 100, 122, 0.15);
+            padding-top: 8px;
+            margin-top: 4px;
+          }
+          .riwayat-time {
+            flex-wrap: wrap;
+          }
         }
       `}</style>
 

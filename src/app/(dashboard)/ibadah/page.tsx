@@ -1445,6 +1445,66 @@ export default function AdaptiveIbadahPage() {
           50% { opacity: 1; }
           100% { top: 50px; opacity: 0; }
         }
+
+        @media (max-width: 768px) {
+          .page-container {
+            padding: 4px;
+          }
+          .app-wrap {
+            border-radius: 12px;
+            border: none;
+            box-shadow: none;
+          }
+          .main {
+            padding: 16px 12px;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+          }
+          .sidebar {
+            padding: 16px 12px;
+          }
+          .overview-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+          }
+          .ibadah-brand-title {
+            font-size: 34px !important;
+          }
+          .form-row {
+            grid-template-columns: 1fr;
+            gap: 8px;
+          }
+          .date-sel {
+            flex-wrap: wrap;
+          }
+          .fase-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+          .fase-val {
+            margin-left: 0;
+            width: 100%;
+          }
+          .fase-select {
+            margin-left: 0;
+            width: 100%;
+            padding: 6px 10px;
+          }
+          .riwayat-box {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 12px;
+          }
+          .riwayat-actions {
+            width: 100%;
+            justify-content: space-between;
+            border-top: 1px dashed rgba(200, 100, 122, 0.15);
+            padding-top: 8px;
+            margin-top: 4px;
+          }
+        }
       `}</style>
 
       <div className="app-wrap">

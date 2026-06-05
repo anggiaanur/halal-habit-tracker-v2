@@ -555,7 +555,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </header>
 
       {/* ── BODY ── */}
-      <div className="flex-1 flex max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-5 gap-6">
+      <div className="flex-1 flex max-w-[1440px] w-full mx-auto px-2 sm:px-6 lg:px-8 relative z-10 py-3 sm:py-5 gap-4 lg:gap-6">
         {/* Desktop Sidebar */}
         <aside className="hidden lg:block shrink-0" style={{ width: "240px" }}>
           <div className="custom-sidebar sticky top-24">

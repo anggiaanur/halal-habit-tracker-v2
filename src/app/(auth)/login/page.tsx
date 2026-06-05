@@ -174,6 +174,14 @@ export default function LoginPage() {
     <>
       <style>{`
         ::placeholder { color: #D4A5B8; }
+        @media (max-width: 1023px) {
+          .left-panel-coquette { display: none !important; }
+          .mobile-header-coquette { display: flex !important; }
+        }
+        @media (min-width: 1024px) {
+          .left-panel-coquette { display: flex !important; }
+          .mobile-header-coquette { display: none !important; }
+        }
       `}</style>
 
       <div
@@ -191,13 +199,12 @@ export default function LoginPage() {
             width: "46%",
             background: "linear-gradient(160deg, #FFF0F3 0%, #FFE4EC 40%, #FECDD3 80%, #FDB9C8 100%)",
             padding: "44px 40px",
-            display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
             position: "relative",
             overflow: "hidden",
           }}
-          className="hidden lg:flex"
+          className="left-panel-coquette hidden lg:flex"
         >
           {/* Decorative blobs */}
           <div style={{ position: "absolute", width: 280, height: 280, borderRadius: "50%", background: "radial-gradient(circle, rgba(251,207,232,0.7), transparent 65%)", top: -80, right: -60 }} />
@@ -284,7 +291,7 @@ export default function LoginPage() {
           <div style={{ width: "100%", maxWidth: 360 }}>
 
             {/* Mobile brand header */}
-            <div className="flex lg:hidden flex-col items-center mb-8">
+            <div className="mobile-header-coquette flex lg:hidden flex-col items-center mb-8">
               <HalalLogo size={44} />
               <p style={{ fontFamily: "var(--font-playfair-display), serif", fontSize: 22, fontWeight: 700, color: "#9F1239", marginTop: 10 }}>
                 Halal Habit Tracker
