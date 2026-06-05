@@ -198,11 +198,14 @@ export default function LaporanKeuanganPage() {
         if (loadedHtml2pdf) {
           runExport(loadedHtml2pdf);
         } else {
-          alert("Gagal memuat library PDF. Periksa koneksi internet Anda! 🌸");
+          // Fallback to print
+          alert("Gagal memuat ekspor PDF. Membuka dialog cetak browser sebagai alternatif... (Silakan pilih 'Simpan sebagai PDF' / 'Save as PDF' 🌸)");
+          window.print();
         }
       };
       script.onerror = () => {
-        alert("Gagal memuat library PDF dari server. 🌸");
+        alert("Membuka dialog cetak browser... (Silakan pilih 'Simpan sebagai PDF' / 'Save as PDF' untuk mengunduh laporan 🌸)");
+        window.print();
       };
       document.body.appendChild(script);
     }
