@@ -110,29 +110,46 @@ export default function LoginPage() {
     setIsLoading(true);
     setErrorMsg("");
 
-    // 1. Check local mock database first
-    const mockUsersStr = localStorage.getItem("mock_users");
-    const mockUsers = mockUsersStr ? JSON.parse(mockUsersStr) : [];
-    const foundUser = mockUsers.find(
-      (u: any) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-    );
+    const cleanEmail = email.trim();
+    const cleanPassword = password.trim();
 
-    if (foundUser) {
-      localStorage.setItem("mock_user_session", JSON.stringify({ email, name: foundUser.name }));
-      router.push("/");
-      return;
-    }
-
-    // 2. Default mock admin user for quick review
-    if (email.toLowerCase() === "admin@gmail.com" && password === "admin123") {
-      localStorage.setItem("mock_user_session", JSON.stringify({ email, name: "Sahabat Admin" }));
-      router.push("/");
-      return;
-    }
-
-    // 3. Fallback to Supabase (if keys are configured)
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      // 1. Check Supabase Cloud Mock Users Table first (for cross-device/browser support)
+      const { data: dbUser, error: dbUserError } = await supabase
+        .from("syariah_mock_users")
+        .select("*")
+        .eq("email", cleanEmail.toLowerCase())
+        .eq("password", cleanPassword)
+        .maybeSingle();
+
+      if (dbUser) {
+        localStorage.setItem("mock_user_session", JSON.stringify({ email: dbUser.email, name: dbUser.name }));
+        router.push("/");
+        return;
+      }
+
+      // 2. Check local mock database (fallback)
+      const mockUsersStr = localStorage.getItem("mock_users");
+      const mockUsers = mockUsersStr ? JSON.parse(mockUsersStr) : [];
+      const foundUser = mockUsers.find(
+        (u: any) => u.email.toLowerCase() === cleanEmail.toLowerCase() && u.password === cleanPassword
+      );
+
+      if (foundUser) {
+        localStorage.setItem("mock_user_session", JSON.stringify({ email: cleanEmail, name: foundUser.name }));
+        router.push("/");
+        return;
+      }
+
+      // 3. Default mock admin user for quick review
+      if (cleanEmail.toLowerCase() === "admin@gmail.com" && cleanPassword === "admin123") {
+        localStorage.setItem("mock_user_session", JSON.stringify({ email: cleanEmail, name: "Sahabat Admin" }));
+        router.push("/");
+        return;
+      }
+
+      // 4. Fallback to Supabase (if keys are configured)
+      const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password: cleanPassword });
       if (error) {
         setErrorMsg(error.message);
         setIsLoading(false);
@@ -194,25 +211,81 @@ export default function LoginPage() {
     <>
       <style>{`
         ::placeholder { color: #D4A5B8; }
+        .login-card-top-bar { display: none; }
+        .mobile-decorations { display: none; }
+
         @media (max-width: 1023px) {
           .left-panel-coquette { display: none !important; }
           .mobile-header-coquette { display: flex !important; }
+          .mobile-decorations { display: block !important; }
+          .login-container {
+            background-color: #FFF0F3 !important; /* Romantic rose backdrop */
+            justify-content: center !important;
+            align-items: center !important;
+            padding: 20px 16px !important;
+            position: relative !important;
+          }
+          .login-right-panel {
+            background: transparent !important;
+            min-height: auto !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 440px !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            margin: auto 0 !important;
+          }
+          .login-card {
+            background: rgba(255, 255, 255, 0.82) !important;
+            border: 1px solid rgba(244, 114, 182, 0.22) !important;
+            border-radius: 2rem !important;
+            backdrop-filter: blur(24px) !important;
+            -webkit-backdrop-filter: blur(24px) !important;
+            padding: 44px 28px 36px !important;
+            box-shadow: 0 20px 40px rgba(244, 63, 94, 0.05), 0 1px 12px rgba(244, 114, 182, 0.12) !important;
+            width: 100% !important;
+            position: relative !important;
+            overflow: hidden;
+          }
+          .login-card-top-bar {
+            display: block !important;
+            height: 5px;
+            background: linear-gradient(to right, #FDA4AF, #FB7185, #F472B6);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+          }
         }
         @media (min-width: 1024px) {
           .left-panel-coquette { display: flex !important; }
           .mobile-header-coquette { display: none !important; }
+          .mobile-decorations { display: none !important; }
         }
       `}</style>
 
       <div
+        className="login-container"
         style={{
           minHeight: "100vh",
           display: "flex",
           fontFamily: "var(--font-quicksand), sans-serif",
           fontSize: "14px",
           flexDirection: "row",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
+        {/* Mobile floating background elements */}
+        <div className="mobile-decorations">
+          <div className="blob blob-1" style={{ position: "absolute", top: "-10%", left: "-10%", width: "300px", height: "300px", borderRadius: "50%", background: "rgba(254, 205, 211, 0.4)", filter: "blur(60px)", zIndex: 0 }} />
+          <div className="blob blob-2" style={{ position: "absolute", bottom: "-10%", right: "-10%", width: "250px", height: "250px", borderRadius: "50%", background: "rgba(253, 164, 175, 0.35)", filter: "blur(50px)", zIndex: 0 }} />
+          <div className="absolute top-10 right-12 text-rose-300/45 text-4xl select-none animate-float pointer-events-none" style={{ zIndex: 0 }}>✨</div>
+          <div className="absolute bottom-10 left-12 text-rose-300/35 text-5xl select-none animate-float pointer-events-none" style={{ animationDelay: "1.5s", zIndex: 0 }}>🎀</div>
+          <div className="absolute top-1/3 left-6 text-rose-300/30 text-3xl select-none animate-float pointer-events-none" style={{ animationDelay: "2.5s", zIndex: 0 }}>🌸</div>
+        </div>
+
         {/* ═══════════════ LEFT PANEL ═══════════════ */}
         <div
           style={{
@@ -309,22 +382,76 @@ export default function LoginPage() {
 
         {/* ═══════════════ RIGHT PANEL ═══════════════ */}
         <div
-          style={{ flex: 1, background: "#FFFFFF", display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "center", padding: "44px 32px" }}
+          className="login-right-panel"
+          style={{
+            flex: 1,
+            background: "#FFFFFF",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "44px 32px",
+            minHeight: "100vh",
+            position: "relative",
+            zIndex: 1,
+          }}
         >
-          <div style={{ width: "100%", maxWidth: 360 }}>
+          <div className="login-card" style={{ width: "100%", maxWidth: 360, margin: "auto 0" }}>
+            <div className="login-card-top-bar" />
 
-            {/* Mobile brand header */}
+            {/* Mobile-only Concentric Aesthetic Logo & Header */}
             <div 
               onClick={handleLogoClick}
-              style={{ cursor: "pointer" }}
-              className="mobile-header-coquette flex lg:hidden flex-col items-center mb-8"
+              className="mobile-header-coquette flex lg:hidden"
+              style={{ 
+                flexDirection: "column", 
+                alignItems: "center", 
+                gap: "12px", 
+                width: "100%", 
+                marginBottom: "24px",
+                cursor: "pointer"
+              }}
             >
-              <HalalLogo size={44} />
-              <p style={{ fontFamily: "var(--font-playfair-display), serif", fontSize: 22, fontWeight: 700, color: "#9F1239", marginTop: 10 }}>
-                Halal Habit Tracker
+              <div className="relative h-20 w-20 mb-1 flex items-center justify-center group">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-rose-300 to-pink-400 opacity-20 blur-md group-hover:opacity-45 transition duration-500" />
+                <div className="absolute inset-0 rounded-full border border-rose-300/50 group-hover:rotate-45 transition-transform duration-700" />
+                
+                <div className="absolute inset-1.5 rounded-full bg-white/50 border border-white/80 backdrop-blur-md flex items-center justify-center shadow-sm">
+                  <div className="h-11 w-11 rounded-full bg-gradient-to-tr from-rose-400 to-pink-500 flex items-center justify-center shadow-inner relative overflow-hidden">
+                    <Sparkles className="h-5 w-5 text-white animate-float" />
+                    <div className="absolute -top-2 -right-2 w-5 h-5 bg-white/20 rounded-full blur-xs" />
+                  </div>
+                </div>
+              </div>
+              
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", width: "100%" }}>
+                <h1 className="text-5xl font-handwriting text-rose-900 tracking-wide text-center">
+                  Halal Habit
+                </h1>
+                <h2 className="text-[11px] font-serif font-light uppercase tracking-[0.25em] text-center" style={{ color: "#DB2777" }}>
+                  Masuk ke Akun Anda 🎀
+                </h2>
+              </div>
+              
+              <p className="text-xs text-center font-serif italic text-rose-400" style={{ lineHeight: "1.5", maxWidth: "280px" }}>
+                &quot;Assalamu&apos;alaikum, silakan masuk untuk melanjutkan istiqomah Anda.&quot; 🌸
               </p>
-              <p style={{ fontSize: 9, fontWeight: 800, color: "#FB7185", letterSpacing: "0.2em", textTransform: "uppercase", marginTop: 2 }}>
-                amanah · berkah · bermanfaat 🎀
+            </div>
+
+            {/* Desktop-only Header Text */}
+            <div className="hidden lg:block">
+              <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#FB7185", marginBottom: 12, fontFamily: "var(--font-playfair-display), serif" }}>
+                Masuk ke Akun Anda
+              </p>
+              <h1 style={{ fontFamily: "var(--font-playfair-display), serif", fontSize: 38, fontWeight: 700, color: "#1C1917", lineHeight: 1.25, marginBottom: 10 }}>
+                Selamat<br />
+                <span style={{ color: "#E11D48" }}>datang kembali ✦</span>
+              </h1>
+              <p style={{ fontSize: 14, color: "#78716C", marginBottom: 28, fontWeight: 600, lineHeight: 1.5 }}>
+                Belum punya akun?{" "}
+                <Link href="/register" style={{ color: "#E11D48", textDecoration: "none", fontWeight: 700, marginLeft: "4px" }} className="hover:underline">
+                  Daftar gratis 🎀
+                </Link>
               </p>
             </div>
 
@@ -359,20 +486,6 @@ export default function LoginPage() {
                 </button>
               </div>
             )}
-
-            <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: "#FB7185", marginBottom: 12, fontFamily: "var(--font-playfair-display), serif" }}>
-              Masuk ke Akun Anda
-            </p>
-            <h1 style={{ fontFamily: "var(--font-playfair-display), serif", fontSize: 38, fontWeight: 700, color: "#1C1917", lineHeight: 1.25, marginBottom: 10 }}>
-              Selamat<br />
-              <span style={{ color: "#E11D48" }}>datang kembali ✦</span>
-            </h1>
-            <p style={{ fontSize: 14, color: "#78716C", marginBottom: 28, fontWeight: 600, lineHeight: 1.5 }}>
-              Belum punya akun?{" "}
-              <Link href="/register" style={{ color: "#E11D48", textDecoration: "none", fontWeight: 700, marginLeft: "4px" }} className="hover:underline">
-                Daftar gratis 🎀
-              </Link>
-            </p>
 
             {/* Beautiful Coquette Alert Warning */}
             {errorMsg && (
@@ -552,12 +665,22 @@ export default function LoginPage() {
                 gap: 10,
                 transition: "all 0.2s",
                 boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
-                marginBottom: 24,
+                marginBottom: 20,
               }}
             >
               <GoogleIcon />
               Masuk dengan Google
             </button>
+
+            {/* Mobile-only Link to Register */}
+            <div className="block lg:hidden" style={{ textAlign: "center", marginTop: "-12px", marginBottom: "20px" }}>
+              <p style={{ fontSize: 13.5, color: "#78716C", fontWeight: 600 }}>
+                Belum punya akun?{" "}
+                <Link href="/register" style={{ color: "#E11D48", textDecoration: "none", fontWeight: 700, marginLeft: "4px" }} className="hover:underline">
+                  Daftar gratis 🎀
+                </Link>
+              </p>
+            </div>
 
             <p style={{ textAlign: "center", fontSize: 11, color: "#C4A0B0", lineHeight: 1.5, fontWeight: 500 }}>
               Dengan masuk, kamu menyetujui{" "}

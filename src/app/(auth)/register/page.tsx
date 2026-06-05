@@ -21,30 +21,50 @@ export default function Register() {
     setErrorMsg("");
     setSuccessMsg("");
 
+    const cleanName = name.trim();
+    const cleanEmail = email.trim();
+    const cleanPassword = password.trim();
+
     try {
       // 1. Save user to mock localStorage database
       const mockUsersStr = localStorage.getItem("mock_users");
       const mockUsers = mockUsersStr ? JSON.parse(mockUsersStr) : [];
       
-      if (mockUsers.some((u: any) => u.email.toLowerCase() === email.toLowerCase())) {
+      if (mockUsers.some((u: any) => u.email.toLowerCase() === cleanEmail.toLowerCase())) {
         setErrorMsg("Email sudah terdaftar.");
         setIsLoading(false);
         return;
       }
 
-      mockUsers.push({ name, email, password });
+      mockUsers.push({ name: cleanName, email: cleanEmail, password: cleanPassword });
       localStorage.setItem("mock_users", JSON.stringify(mockUsers));
 
-      // 2. Attempt real Supabase signup if configured
+      // 2. Save user to Supabase Cloud Mock Users Table (for cross-device/browser support)
+      const { error: dbError } = await supabase.from("syariah_mock_users").insert({
+        name: cleanName,
+        email: cleanEmail.toLowerCase(),
+        password: cleanPassword
+      });
+
+      if (dbError) {
+        if (dbError.code === "23505") { // Unique violation code in Postgres
+          setErrorMsg("Email sudah terdaftar di database cloud.");
+          setIsLoading(false);
+          return;
+        }
+        console.warn("Supabase mock DB insert warning:", dbError.message);
+      }
+
+      // 3. Attempt real Supabase signup if configured
       const isPlaceholder = !process.env.NEXT_PUBLIC_SUPABASE_URL || 
                             process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder");
       if (!isPlaceholder) {
         const { error } = await supabase.auth.signUp({
-          email,
-          password,
+          email: cleanEmail,
+          password: cleanPassword,
           options: {
             data: {
-              full_name: name,
+              full_name: cleanName,
             },
             emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
