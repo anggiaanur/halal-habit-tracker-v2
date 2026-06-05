@@ -613,7 +613,15 @@ export default function AIAdvisor() {
                 <div
                   key={i}
                   className="topic-row"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleSendQuery(topic.query)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleSendQuery(topic.query);
+                    }
+                  }}
                 >
                   <span>{topic.label}</span>
                   <ChevronRight className="h-3.5 w-3.5 opacity-60" />
