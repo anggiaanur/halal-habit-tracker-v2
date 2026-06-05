@@ -103,9 +103,9 @@ export default function Dashboard() {
             .eq("user_id", user.id)
             .single();
           if (userState) {
-            if (userState.period_start_day) setLastStart(`${userState.period_start_day} Juni 2026`);
+            if (userState.cycle_last_period_start) setLastStart(`${userState.cycle_last_period_start} Juni 2026`);
             if (userState.cycle_length) setCycleLength(userState.cycle_length);
-            if (userState.period_length) setPeriodDuration(userState.period_length);
+            if (userState.cycle_period_length) setPeriodDuration(userState.cycle_period_length);
           }
 
           // Fetch amalan checklist logs from Supabase

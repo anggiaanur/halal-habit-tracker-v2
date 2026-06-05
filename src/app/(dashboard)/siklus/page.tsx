@@ -23,7 +23,7 @@ export default function JurnalSiklusPage() {
   ]);
 
   // React State for interactive Flo-style inputs:
-  const [lastPeriodStart, setLastPeriodStart] = useState<number>(1); // e.g. June 1
+  const [lastPeriodStart, setLastPeriodStart] = useState<number | null>(null); // e.g. June 1
   const [cycleLength, setCycleLength] = useState<number>(28);       // e.g. 28 days
   const [periodLength, setPeriodLength] = useState<number>(6);       // e.g. 6 days
 
@@ -75,7 +75,7 @@ export default function JurnalSiklusPage() {
     loadState();
   }, [supabase]);
 
-  const updateCycleSettings = async (start: number, cycle: number, period: number) => {
+  const updateCycleSettings = async (start: number | null, cycle: number, period: number) => {
     if (userId) {
       await supabase.from("syariah_user_states").upsert({
         user_id: userId,
@@ -84,7 +84,11 @@ export default function JurnalSiklusPage() {
         cycle_period_length: period
       }, { onConflict: "user_id" });
     } else {
-      localStorage.setItem("siklus-lastPeriodStart", start.toString());
+      if (start === null) {
+        localStorage.removeItem("siklus-lastPeriodStart");
+      } else {
+        localStorage.setItem("siklus-lastPeriodStart", start.toString());
+      }
       localStorage.setItem("siklus-cycleLength", cycle.toString());
       localStorage.setItem("siklus-periodLength", period.toString());
     }
@@ -118,25 +122,29 @@ export default function JurnalSiklusPage() {
   const suburDays = new Set<number>();
   const suciDays = new Set<number>();
 
-  // 1. Current period days
-  for (let i = 0; i < periodLength; i++) {
-    const day = lastPeriodStart + i;
-    if (day <= daysInMonth && day > 0) haidDays.add(day);
-  }
+  let nextPeriodStart = 0;
 
-  // 2. Next period days (predicted)
-  const nextPeriodStart = lastPeriodStart + cycleLength;
-  for (let i = 0; i < periodLength; i++) {
-    const day = nextPeriodStart + i;
-    if (day <= daysInMonth && day > 0) haidDays.add(day);
-  }
+  if (lastPeriodStart !== null) {
+    // 1. Current period days
+    for (let i = 0; i < periodLength; i++) {
+      const day = lastPeriodStart + i;
+      if (day <= daysInMonth && day > 0) haidDays.add(day);
+    }
 
-  // 3. Fertile window (12 to 16 days before next period start)
-  const ovulationDay = nextPeriodStart - 14;
-  for (let i = -2; i <= 2; i++) {
-    const day = ovulationDay + i;
-    if (day > 0 && day <= daysInMonth && !haidDays.has(day)) {
-      suburDays.add(day);
+    // 2. Next period days (predicted)
+    nextPeriodStart = lastPeriodStart + cycleLength;
+    for (let i = 0; i < periodLength; i++) {
+      const day = nextPeriodStart + i;
+      if (day <= daysInMonth && day > 0) haidDays.add(day);
+    }
+
+    // 3. Fertile window (12 to 16 days before next period start)
+    const ovulationDay = nextPeriodStart - 14;
+    for (let i = -2; i <= 2; i++) {
+      const day = ovulationDay + i;
+      if (day > 0 && day <= daysInMonth && !haidDays.has(day)) {
+        suburDays.add(day);
+      }
     }
   }
 
@@ -867,15 +875,21 @@ export default function JurnalSiklusPage() {
                 animation: "pulse-icon 4s ease-in-out infinite"
               }}>
                 <span style={{ fontSize: "10px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", opacity: 0.9 }}>
-                  {getDayType(today) === "haid" ? "Hari Ke-" : "Haid Berikutnya"}
+                  {lastPeriodStart === null 
+                    ? "Log Siklus"
+                    : (getDayType(today) === "haid" ? "Hari Ke-" : "Haid Berikutnya")}
                 </span>
                 <span style={{ fontSize: "28px", fontWeight: 800, margin: "2px 0", fontFamily: "var(--font-playfair-display), serif" }}>
-                  {getDayType(today) === "haid" 
-                    ? today - lastPeriodStart + 1 
-                    : nextPeriodStart - today}
+                  {lastPeriodStart === null 
+                    ? "—"
+                    : (getDayType(today) === "haid" 
+                      ? today - lastPeriodStart + 1 
+                      : nextPeriodStart - today)}
                 </span>
                 <span style={{ fontSize: "10px", fontWeight: 700, opacity: 0.9 }}>
-                  {getDayType(today) === "haid" ? "Fase Haid 🩸" : "Hari Lagi 🗓"}
+                  {lastPeriodStart === null 
+                    ? "Belum Ada Data 🌸" 
+                    : (getDayType(today) === "haid" ? "Fase Haid 🩸" : "Hari Lagi 🗓")}
                 </span>
               </div>
 
@@ -891,9 +905,15 @@ export default function JurnalSiklusPage() {
                   border: "1px solid rgba(244, 114, 182, 0.15)",
                   color: "#5c434f"
                 }}>
-                  💡 Haid Anda berikutnya diperkirakan jatuh pada hari ke-<strong>{nextPeriodStart} Juni 2026</strong>.
-                  <br />
-                  Masa subur berikutnya pada rentang tanggal <strong>{nextPeriodStart - 16} - {nextPeriodStart - 12} Juni 2026</strong>.
+                  {lastPeriodStart === null ? (
+                    <span>💡 Silakan pilih tanggal mulai haid terakhir Anda di bawah untuk mengaktifkan prediksi cerdas.</span>
+                  ) : (
+                    <>
+                      💡 Haid Anda berikutnya diperkirakan jatuh pada hari ke-<strong>{nextPeriodStart} Juni 2026</strong>.
+                      <br />
+                      Masa subur berikutnya pada rentang tanggal <strong>{nextPeriodStart - 16} - {nextPeriodStart - 12} Juni 2026</strong>.
+                    </>
+                  )}
                 </div>
 
                 {/* Control inputs in a row */}
@@ -908,9 +928,9 @@ export default function JurnalSiklusPage() {
                       Mulai Haid Terakhir:
                     </label>
                     <select
-                      value={lastPeriodStart}
+                      value={lastPeriodStart === null ? "" : lastPeriodStart}
                       onChange={(e) => {
-                        const val = Number(e.target.value);
+                        const val = e.target.value === "" ? null : Number(e.target.value);
                         setLastPeriodStart(val);
                         updateCycleSettings(val, cycleLength, periodLength);
                       }}
@@ -926,6 +946,7 @@ export default function JurnalSiklusPage() {
                         outline: "none"
                       }}
                     >
+                      <option value="">-- Pilih Tanggal --</option>
                       {Array.from({ length: 25 }, (_, i) => i + 1).map((d) => (
                         <option key={d} value={d}>Tanggal {d} Juni</option>
                       ))}
@@ -1048,7 +1069,7 @@ export default function JurnalSiklusPage() {
               <div>
                 <div className="amalan-title">🌸 Amalan Hari Ini — Mo₂ Checklist</div>
                 <div className="amalan-sub">
-                  Senin, 1 Juni · {getDayType(today) === "haid" ? "Mode Haid 🔴 (Hari ke-" + (today - lastPeriodStart + 1) + ")" : "Mode Suci 🟢"}
+                  Senin, 1 Juni · {getDayType(today) === "haid" && lastPeriodStart !== null ? "Mode Haid 🔴 (Hari ke-" + (today - lastPeriodStart + 1) + ")" : "Mode Suci 🟢"}
                 </div>
               </div>
               <div className="amalan-pts">{earnedPoints} / {totalPoints} Poin</div>
