@@ -307,7 +307,15 @@ export default function LoginPage() {
 
           {/* Brand */}
           <div 
+            role="button"
+            tabIndex={0}
             onClick={handleLogoClick}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleLogoClick();
+              }
+            }}
             style={{ display: "flex", alignItems: "center", gap: 10, position: "relative", zIndex: 2, cursor: "pointer" }}
           >
             <HalalLogo size={38} />
@@ -402,7 +410,15 @@ export default function LoginPage() {
 
             {/* Mobile-only Concentric Aesthetic Logo & Header */}
             <div 
+              role="button"
+              tabIndex={0}
               onClick={handleLogoClick}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleLogoClick();
+                }
+              }}
               className="mobile-header-coquette flex lg:hidden"
               style={{ 
                 flexDirection: "column", 
