@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { Sparkles, User, Mail, Lock, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, ArrowRight } from "lucide-react";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -127,11 +127,12 @@ export default function Register() {
             
             {/* Middle glass block */}
             <div className="absolute inset-1.5 rounded-full bg-white/50 border border-white/80 backdrop-blur-md flex items-center justify-center shadow-sm">
-              {/* Inner gradient circle */}
-              <div className="h-11 w-11 rounded-full bg-gradient-to-tr from-rose-400 to-pink-500 flex items-center justify-center shadow-inner relative overflow-hidden">
-                <Sparkles className="h-5 w-5 text-white animate-float" />
-                <div className="absolute -top-2 -right-2 w-5 h-5 bg-white/20 rounded-full blur-xs" />
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="/apple-touch-icon.png" 
+                alt="Halal Habit Logo" 
+                className="h-11 w-11 rounded-xl shadow-inner object-cover"
+              />
             </div>
           </div>
           

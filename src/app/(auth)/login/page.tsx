@@ -6,43 +6,6 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Sparkles, Eye, EyeOff, Check } from "lucide-react";
 
-// ─── Inline SVG Logo ─────────────────────────────────────────────────────────
-function HalalLogo({ size = 38 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 38 38"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <linearGradient id="logoGrad" x1="0" y1="0" x2="38" y2="38" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#F472B6" />
-          <stop offset="100%" stopColor="#BE185D" />
-        </linearGradient>
-      </defs>
-      <rect width="38" height="38" rx="12" fill="url(#logoGrad)" />
-      {/* Crescent moon */}
-      <path
-        d="M22 10C17.03 10 13 14.03 13 19C13 23.97 17.03 28 22 28C19.24 28 17 25.76 17 23C17 20.24 19.24 18 22 18C22.68 18 23.33 18.14 23.91 18.39C23.31 15.88 21.87 13.69 19.89 12.14C20.58 10.8 21.22 10 22 10Z"
-        fill="white"
-        opacity="0.9"
-      />
-      {/* Big star */}
-      <path
-        d="M26 11 L26.6 12.8 L28.5 12.8 L27 13.9 L27.6 15.7 L26 14.6 L24.4 15.7 L25 13.9 L23.5 12.8 L25.4 12.8 Z"
-        fill="white"
-      />
-      {/* Small star */}
-      <path
-        d="M28.5 19 L28.85 20.05 L29.95 20.05 L29.05 20.7 L29.4 21.75 L28.5 21.1 L27.6 21.75 L27.95 20.7 L27.05 20.05 L28.15 20.05 Z"
-        fill="white"
-        opacity="0.75"
-      />
-    </svg>
-  );
-}
 
 // ─── Google Icon ──────────────────────────────────────────────────────────────
 function GoogleIcon() {
@@ -318,7 +281,19 @@ export default function LoginPage() {
             }}
             style={{ display: "flex", alignItems: "center", gap: 10, position: "relative", zIndex: 2, cursor: "pointer" }}
           >
-            <HalalLogo size={38} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src="/apple-touch-icon.png" 
+              alt="Halal Habit Logo" 
+              style={{ 
+                width: 38, 
+                height: 38, 
+                borderRadius: 10, 
+                border: "1.5px solid rgba(244, 180, 200, 0.4)",
+                boxShadow: "0 2px 6px rgba(244, 114, 182, 0.15)",
+                objectFit: "cover"
+              }} 
+            />
             <div>
               <p style={{ fontFamily: "var(--font-playfair-display), serif", fontSize: 18, fontWeight: 700, color: "#9F1239", letterSpacing: "0.02em", lineHeight: 1.2 }}>
                 Halal Habit Tracker
@@ -434,10 +409,12 @@ export default function LoginPage() {
                 <div className="absolute inset-0 rounded-full border border-rose-300/50 group-hover:rotate-45 transition-transform duration-700" />
                 
                 <div className="absolute inset-1.5 rounded-full bg-white/50 border border-white/80 backdrop-blur-md flex items-center justify-center shadow-sm">
-                  <div className="h-11 w-11 rounded-full bg-gradient-to-tr from-rose-400 to-pink-500 flex items-center justify-center shadow-inner relative overflow-hidden">
-                    <Sparkles className="h-5 w-5 text-white animate-float" />
-                    <div className="absolute -top-2 -right-2 w-5 h-5 bg-white/20 rounded-full blur-xs" />
-                  </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src="/apple-touch-icon.png" 
+                    alt="Halal Habit Logo" 
+                    className="h-11 w-11 rounded-xl shadow-inner object-cover"
+                  />
                 </div>
               </div>
               
