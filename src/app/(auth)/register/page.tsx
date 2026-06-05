@@ -30,7 +30,7 @@ export default function Register() {
       const mockUsersStr = localStorage.getItem("mock_users");
       const mockUsers = mockUsersStr ? JSON.parse(mockUsersStr) : [];
       
-      if (mockUsers.some((u: any) => u.email.toLowerCase() === cleanEmail.toLowerCase())) {
+      if (mockUsers.some((u: { email: string }) => u.email.toLowerCase() === cleanEmail.toLowerCase())) {
         setErrorMsg("Email sudah terdaftar.");
         setIsLoading(false);
         return;
@@ -79,8 +79,9 @@ export default function Register() {
       setName("");
       setEmail("");
       setPassword("");
-    } catch (err: any) {
-      setErrorMsg(err.message || "Terjadi kesalahan saat mendaftar.");
+    } catch (err) {
+      const error = err as Error;
+      setErrorMsg(error.message || "Terjadi kesalahan saat mendaftar.");
     } finally {
       setIsLoading(false);
     }

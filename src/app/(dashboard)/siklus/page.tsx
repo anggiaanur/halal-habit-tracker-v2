@@ -1163,7 +1163,7 @@ export default function JurnalSiklusPage() {
             <div className="ai-title font-serif">Analisis AI Advisor</div>
             <div className="h-px w-full mb-4" style={{ background: "var(--border)" }} />
             <div className="ai-quote">
-              "Kekuatan ibadahmu ada pada sholat fardhu yang konsisten. Membaca Al-Qur'an saat haid juga sangat baik. Pertahankan terus kebiasaan baikmu demi mencapai target ibadah mingguan."
+              &ldquo;Kekuatan ibadahmu ada pada sholat fardhu yang konsisten. Membaca Al-Qur&apos;an saat haid juga sangat baik. Pertahankan terus kebiasaan baikmu demi mencapai target ibadah mingguan.&rdquo;
             </div>
             <Link href="/ai-advisor" className="ai-btn">
               Tanya AI Advisor ✦

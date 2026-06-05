@@ -146,7 +146,7 @@ export default function AdaptiveIbadahPage() {
 
   // Initialize Auth & Global Profile States
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => setMounted(true), 0);
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -170,7 +170,7 @@ export default function AdaptiveIbadahPage() {
       }
     };
     checkUser();
-  }, [supabase]);
+  }, [supabase, selectedDhikr]);
 
   // Load Date-Specific states
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function AdaptiveIbadahPage() {
       if (!userId) {
         // Fallback to local storage
         const savedPhase = localStorage.getItem("ibadah-phase");
-        if (savedPhase) setActivePhase(savedPhase as any);
+        if (savedPhase) setActivePhase(savedPhase as "suci_penuh" | "haid" | "nifas");
 
         const savedChecks = localStorage.getItem("ibadah-checked-items");
         if (savedChecks) setCheckedItems(JSON.parse(savedChecks));
@@ -266,7 +266,7 @@ export default function AdaptiveIbadahPage() {
         const flatTilawah: TilawahLog[] = [];
         allLogs.forEach(log => {
           if (log.tilawah_logs && Array.isArray(log.tilawah_logs)) {
-            log.tilawah_logs.forEach((t: any) => {
+            log.tilawah_logs.forEach((t: TilawahLog) => {
               flatTilawah.push({
                 ...t,
                 dateKey: log.date
@@ -1532,7 +1532,7 @@ export default function AdaptiveIbadahPage() {
               <select 
                 className="fase-select" 
                 value={activePhase}
-                onChange={(e) => handlePhaseChange(e.target.value as any)}
+                onChange={(e) => handlePhaseChange(e.target.value as "suci_penuh" | "haid" | "nifas")}
               >
                 <option value="suci_penuh">✦ Fase Suci Penuh</option>
                 <option value="haid">Fase Haid</option>
@@ -1652,7 +1652,7 @@ export default function AdaptiveIbadahPage() {
           {/* Tilawah */}
           <div className="sub-section">
             <div className="sub-title">
-              📖 Tilawah Al-Qur'an 
+              📖 Tilawah Al-Qur&apos;an 
               <span className="pts-badge"> {quranPointsEarned} / {quranMaxPoints} Pts maks</span>
             </div>
             <div className="form-card">
@@ -1754,7 +1754,7 @@ export default function AdaptiveIbadahPage() {
                     <span className="jurnal-mood">{currentJournal.mood}</span>
                     <span className="jurnal-date">{currentJournal.date}</span>
                   </div>
-                  <div className="jurnal-text">"{currentJournal.text}"</div>
+                  <div className="jurnal-text">&ldquo;{currentJournal.text}&rdquo;</div>
                 </div>
               )}
             </div>
@@ -1896,7 +1896,7 @@ export default function AdaptiveIbadahPage() {
 
           {/* Target Khatam Qur'an (New Widget) */}
           <div className="khatam-card">
-            <div className="side-title">📖 Target Khatam Qur'an</div>
+            <div className="side-title">📖 Target Khatam Qur&apos;an</div>
             <div className="flex flex-col gap-2.5 mt-2">
               <div className="flex justify-between text-xs text-brown-mid">
                 <span>Progress Khatam:</span>

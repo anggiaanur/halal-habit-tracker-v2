@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const input = await request.json();
     const result = calculateHalalScore(input);
     return NextResponse.json(result);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid calculation input" }, { status: 400 });
   }
 }

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Clicker_Script, Playfair_Display, Quicksand, Great_Vibes } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -70,13 +71,20 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5IfS51RRmC1IQFWddc50XXc3Pr/9WXSLzQsWXYKDKB2GF1nyG4gxhgCOsb7ec/q1MWv50xs+w==" crossOrigin="anonymous" referrerPolicy="no-referrer" defer></script>
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body
         className="min-h-dvh antialiased"
         style={{ fontFamily: "var(--font-quicksand), var(--font-jakarta), system-ui, sans-serif" }}
       >
         {children}
+        <Script
+          src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+          integrity="sha512-GsLlZN/3F2ErC5IfS51RRmC1IQFWddc50XXc3Pr/9WXSLzQsWXYKDKB2GF1nyG4gxhgCOsb7ec/q1MWv50xs+w=="
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

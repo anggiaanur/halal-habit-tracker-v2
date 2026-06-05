@@ -23,7 +23,7 @@ export default function ForgotPassword() {
       // 1. Intercept mock users and show simulation notice
       const mockUsersStr = typeof window !== "undefined" ? localStorage.getItem("mock_users") : null;
       const mockUsers = mockUsersStr ? JSON.parse(mockUsersStr) : [];
-      const isMockAccount = mockUsers.some((u: any) => u.email.toLowerCase() === email.toLowerCase()) || 
+      const isMockAccount = mockUsers.some((u: { email: string }) => u.email.toLowerCase() === email.toLowerCase()) || 
                             email.toLowerCase() === "admin@gmail.com";
 
       if (isMockAccount) {
@@ -59,8 +59,9 @@ export default function ForgotPassword() {
         setSuccessMsg("Tautan reset password telah dikirim ke email Anda! Silakan periksa kotak masuk 🌸");
         setEmail("");
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Terjadi kesalahan saat memproses permintaan.");
+    } catch (err) {
+      const error = err as Error;
+      setErrorMsg(error.message || "Terjadi kesalahan saat memproses permintaan.");
     } finally {
       setIsLoading(false);
     }

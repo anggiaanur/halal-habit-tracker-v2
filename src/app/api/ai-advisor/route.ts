@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   try {
     const response = await askAdvisor(question, user_context);
     return NextResponse.json({ response });
-  } catch (error) {
+  } catch {
     // Fallback mode jika Claude API down
     return NextResponse.json({
       response: "Maaf, AI Advisor sedang tidak tersedia. Silakan coba lagi nanti. 🙏",

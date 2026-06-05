@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FileText, Printer, Download, Calendar, Activity, Check, AlertCircle, FileSpreadsheet } from "lucide-react";
+import { Printer, Download, Calendar, Activity, Check, AlertCircle } from "lucide-react";
 
 interface Transaction {
   id: number;
@@ -35,15 +35,17 @@ export default function LaporanKeuanganPage() {
   const nisabZakat = 85 * hargaEmasPerGram; // Rp 123.250.000
 
   useEffect(() => {
-    setMounted(true);
-    const savedTx = localStorage.getItem("syariah-transactions");
-    if (savedTx) {
-      setTransactions(JSON.parse(savedTx));
-    }
-    const savedDebts = localStorage.getItem("syariah-debts");
-    if (savedDebts) {
-      setDebts(JSON.parse(savedDebts));
-    }
+    setTimeout(() => {
+      setMounted(true);
+      const savedTx = localStorage.getItem("syariah-transactions");
+      if (savedTx) {
+        setTransactions(JSON.parse(savedTx));
+      }
+      const savedDebts = localStorage.getItem("syariah-debts");
+      if (savedDebts) {
+        setDebts(JSON.parse(savedDebts));
+      }
+    }, 0);
   }, []);
 
   if (!mounted) return null;
@@ -98,22 +100,22 @@ export default function LaporanKeuanganPage() {
     return "Rp " + new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(num);
   };
 
-  const handlePrint = () => {
-    if (typeof window === "undefined") return;
-
+  const handleDownloadPDF = () => {
     const element = document.getElementById("print-area-wrapper");
     if (!element) {
       alert("Error: Elemen laporan keuangan (#print-area-wrapper) tidak ditemukan.");
       return;
     }
 
-    try {
-      const exporter = (window as any).html2pdf;
-      if (!exporter) {
-        alert("Gagal mengunduh: Library PDF (html2pdf) sedang dimuat oleh browser. Mohon tunggu 2-3 detik, lalu klik tombol ini lagi! 🌸");
-        return;
-      }
+    interface Html2PdfExporter {
+      from: (el: HTMLElement) => {
+        set: (o: object) => {
+          save: () => void;
+        };
+      };
+    }
 
+    const runExport = (html2pdfLib: () => Html2PdfExporter) => {
       const opt = {
         margin:       [10, 12, 10, 12], // top, left, bottom, right in mm
         filename:     `Laporan_Keuangan_${selectedMonth}_${selectedYear}.pdf`,
@@ -122,7 +124,7 @@ export default function LaporanKeuanganPage() {
           scale: 2, 
           useCORS: true, 
           backgroundColor: "#ffffff",
-          onclone: (clonedDoc: any) => {
+          onclone: (clonedDoc: Document) => {
             const mainCol = clonedDoc.getElementById("print-area-wrapper");
             if (mainCol) {
               mainCol.style.borderRight = "none";
@@ -135,9 +137,29 @@ export default function LaporanKeuanganPage() {
         jsPDF:        { unit: "mm", format: "a4", orientation: "portrait" }
       };
       
-      exporter().from(element).set(opt).save();
-    } catch (err: any) {
-      alert("Gagal memproses PDF: " + err.message);
+      html2pdfLib().from(element).set(opt).save();
+    };
+
+    const globalHtml2pdf = (window as Window & { html2pdf?: () => Html2PdfExporter }).html2pdf;
+    if (globalHtml2pdf) {
+      runExport(globalHtml2pdf);
+    } else {
+      // Load script dynamically
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+      script.crossOrigin = "anonymous";
+      script.onload = () => {
+        const loadedHtml2pdf = (window as Window & { html2pdf?: () => Html2PdfExporter }).html2pdf;
+        if (loadedHtml2pdf) {
+          runExport(loadedHtml2pdf);
+        } else {
+          alert("Gagal memuat library PDF. Periksa koneksi internet Anda! 🌸");
+        }
+      };
+      script.onerror = () => {
+        alert("Gagal memuat library PDF dari server. 🌸");
+      };
+      document.body.appendChild(script);
     }
   };
 
@@ -689,7 +711,7 @@ export default function LaporanKeuanganPage() {
             </div>
             <div className="flex flex-col gap-2">
               <button
-                onClick={handlePrint}
+                onClick={handleDownloadPDF}
                 className="w-full py-2.5 text-xs font-extrabold text-[#C8647A] bg-[#FFF2F7] hover:bg-[#FFF0F4] border border-[#F9EBF2] hover:border-rose-300 rounded-xl shadow-xs transition duration-250 cursor-pointer flex items-center justify-center gap-2 font-sans"
               >
                 <Download className="h-3.5 w-3.5" /> Unduh Laporan PDF

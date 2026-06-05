@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, TrendingUp, TrendingDown, HelpCircle, Heart, Star, Sparkles } from "lucide-react";
+import { TrendingUp, TrendingDown, HelpCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 // ==========================================
@@ -60,7 +60,7 @@ export default function KeuanganSyariahPage() {
   const [txYear, setTxYear] = useState("2026");
 
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => setMounted(true), 0);
     const loadData = async () => {
       // Check user session
       const { data: { user } } = await supabase.auth.getUser();
@@ -1144,7 +1144,7 @@ export default function KeuanganSyariahPage() {
                   <select 
                     className="inp" 
                     value={type}
-                    onChange={(e) => handleTypeChange(e.target.value as any)}
+                    onChange={(e) => handleTypeChange(e.target.value as "pemasukan" | "pengeluaran")}
                   >
                     <option value="pengeluaran">Keluar (Pengeluaran)</option>
                     <option value="pemasukan">Masuk (Pemasukan)</option>
@@ -1189,7 +1189,7 @@ export default function KeuanganSyariahPage() {
                   <select 
                     className="inp" 
                     value={tag}
-                    onChange={(e) => setTag(e.target.value as any)}
+                    onChange={(e) => setTag(e.target.value as "halal" | "syubhat" | "pokok" | "sekunder" | "boros")}
                   >
                     {type === "pemasukan" ? (
                       <>
@@ -1246,7 +1246,23 @@ export default function KeuanganSyariahPage() {
           </div>
 
           {/* Riwayat Transaksi */}
-          <div className="section-title mt-8">📜 Riwayat Transaksi</div>
+          <div className="flex justify-between items-center mt-8 mb-4">
+            <div className="section-title" style={{ margin: 0 }}>📜 Riwayat Transaksi</div>
+            <div className="flex gap-2">
+              <button 
+                onClick={handleDownloadCSV} 
+                className="px-3 py-1.5 text-xs font-bold bg-[#FFF2F6] hover:bg-[#FCE2F0] border border-[#F9EBF2] hover:border-[#FCE2F0] text-[#C8647A] rounded-full transition duration-200 cursor-pointer shadow-xs"
+              >
+                📥 Unduh CSV
+              </button>
+              <button 
+                onClick={handlePrintReport} 
+                className="px-3 py-1.5 text-xs font-bold bg-[#FFF2F6] hover:bg-[#FCE2F0] border border-[#F9EBF2] hover:border-[#FCE2F0] text-[#C8647A] rounded-full transition duration-200 cursor-pointer shadow-xs"
+              >
+                🖨️ Cetak Laporan
+              </button>
+            </div>
+          </div>
           
           <div className="filter-chips">
             {[
@@ -1500,7 +1516,7 @@ export default function KeuanganSyariahPage() {
                       <select
                         className="inp py-1 px-2 text-xs"
                         value={debtType}
-                        onChange={(e) => setDebtType(e.target.value as any)}
+                        onChange={(e) => setDebtType(e.target.value as "utang" | "piutang")}
                       >
                         <option value="piutang">Piutang 💖</option>
                         <option value="utang">Utang 😔</option>

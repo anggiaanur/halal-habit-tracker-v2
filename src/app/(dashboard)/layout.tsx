@@ -93,7 +93,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             email: session.email || "user@example.com"
           });
           return;
-        } catch (e) {
+        } catch {
           // ignore error
         }
       }
@@ -140,14 +140,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   } | null>(null);
 
   useEffect(() => {
-    const PRAYER_TIMES = [
-      { name: "Subuh", time: "04:42" },
-      { name: "Dzuhur", time: "11:58" },
-      { name: "Ashar", time: "15:18" },
-      { name: "Maghrib", time: "17:50" },
-      { name: "Isya", time: "19:02" },
-    ];
-
     const updatePrayerTime = () => {
       const now = new Date();
       const currentMinutes = now.getHours() * 60 + now.getMinutes();

@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import {
-  TrendingUp, TrendingDown, Award, Flame,
-  ChevronRight, CheckCircle2, Sparkles, ArrowUpRight,
-  Calendar, Moon, Wallet, HeartHandshake, MessageSquare, Plus, Check
+  TrendingUp, TrendingDown,
+  CheckCircle2, Sparkles, ArrowUpRight,
+  Calendar, MessageSquare, Plus
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -18,7 +19,7 @@ export default function Dashboard() {
   const [cycleLength, setCycleLength] = useState(28);
   const [periodDuration, setPeriodDuration] = useState(7);
   const [notes, setNotes] = useState("");
-  const [loggedCycles, setLoggedCycles] = useState<any[]>([]);
+  const [loggedCycles, setLoggedCycles] = useState<{ id: number; start: string; end: string; duration: number; note: string }[]>([]);
 
   // Date selections state for cycle logger
   const [logDay, setLogDay] = useState("1");
@@ -26,7 +27,7 @@ export default function Dashboard() {
   const [logYear, setLogYear] = useState("2026");
 
   // Dynamic state for transactions
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<{ desc: string; amount: number; type: string; tag: string; date: string }[]>([]);
 
   // State untuk checklist amalan (synced dengan Jurnal Siklus / Jurnal Ibadah)
   const [checkedAmalans, setCheckedAmalans] = useState<boolean[]>(new Array(10).fill(false));
@@ -76,8 +77,6 @@ export default function Dashboard() {
       if (savedLoggedCycles) setLoggedCycles(JSON.parse(savedLoggedCycles));
       
       if (!mockSessionStr && !isBypassed) {
-        // Normal Supabase session
-        const { createClient } = require("@/lib/supabase/client");
         const supabaseClient = createClient();
         const { data: { user } } = await supabaseClient.auth.getUser();
         if (user) {
@@ -87,7 +86,7 @@ export default function Dashboard() {
             .select("*")
             .order("created_at", { ascending: false });
           if (txData) {
-            setTransactions(txData.map((t: any) => ({
+            setTransactions(txData.map((t: { description: string; amount: number | string; type: string; tag: string; date: string }) => ({
               desc: t.description,
               amount: Number(t.amount),
               type: t.type === "pemasukan" ? "in" : "out",
@@ -123,10 +122,9 @@ export default function Dashboard() {
         }
       }
       
-      // Fallback to localStorage for transactions
       const savedTx = localStorage.getItem("syariah-transactions");
       if (savedTx) {
-        setTransactions(JSON.parse(savedTx).map((t: any) => ({
+        setTransactions(JSON.parse(savedTx).map((t: { desc: string; amount: number; type: string; tag: string; date: string }) => ({
           desc: t.desc,
           amount: t.amount,
           type: t.type === "pemasukan" ? "in" : "out",
@@ -139,7 +137,7 @@ export default function Dashboard() {
       const savedAmalans = localStorage.getItem("siklus-amalans");
       if (savedAmalans) {
         const parsed = JSON.parse(savedAmalans);
-        setCheckedAmalans(parsed.map((a: any) => !!a.done));
+        setCheckedAmalans(parsed.map((a: { done?: boolean }) => !!a.done));
       }
     };
     loadData();
@@ -163,8 +161,7 @@ export default function Dashboard() {
   const activeChecked = activeAmalans.filter(idx => checkedAmalans[idx]).length;
   const scoreValue = Math.round((activeChecked / activeAmalans.length) * 100);
 
-  const circumference = 2 * Math.PI * 52;
-  const dashOffset = circumference * (1 - scoreValue / 100);
+
 
   // Dynamic Indexes calculations:
   // 1. Kedisiplinan Finansial (out of 40)

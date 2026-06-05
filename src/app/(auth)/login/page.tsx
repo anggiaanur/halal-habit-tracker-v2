@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Sparkles, Eye, EyeOff, Check, Heart } from "lucide-react";
+import { Sparkles, Eye, EyeOff, Check } from "lucide-react";
 
 // ─── Inline SVG Logo ─────────────────────────────────────────────────────────
 function HalalLogo({ size = 38 }: { size?: number }) {
@@ -77,7 +77,7 @@ export default function LoginPage() {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       if (params.get("dev") === "true" || params.get("admin") === "true") {
-        setShowDevBypass(true);
+        setTimeout(() => setShowDevBypass(true), 0);
       }
     }
   }, []);
@@ -115,7 +115,7 @@ export default function LoginPage() {
 
     try {
       // 1. Check Supabase Cloud Mock Users Table first (for cross-device/browser support)
-      const { data: dbUser, error: dbUserError } = await supabase
+      const { data: dbUser } = await supabase
         .from("syariah_mock_users")
         .select("*")
         .eq("email", cleanEmail.toLowerCase())
@@ -132,7 +132,7 @@ export default function LoginPage() {
       const mockUsersStr = localStorage.getItem("mock_users");
       const mockUsers = mockUsersStr ? JSON.parse(mockUsersStr) : [];
       const foundUser = mockUsers.find(
-        (u: any) => u.email.toLowerCase() === cleanEmail.toLowerCase() && u.password === cleanPassword
+        (u: { email: string; password?: string }) => u.email.toLowerCase() === cleanEmail.toLowerCase() && u.password === cleanPassword
       );
 
       if (foundUser) {
@@ -156,7 +156,7 @@ export default function LoginPage() {
       } else {
         router.push("/");
       }
-    } catch (err: any) {
+    } catch {
       setErrorMsg("Email atau password tidak valid.");
       setIsLoading(false);
     }
@@ -186,8 +186,9 @@ export default function LoginPage() {
         setErrorMsg(error.message);
         setIsLoading(false);
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || "Gagal mengaitkan Google OAuth.");
+    } catch (err) {
+      const error = err as Error;
+      setErrorMsg(error.message || "Gagal mengaitkan Google OAuth.");
       setIsLoading(false);
     }
   };
@@ -524,10 +525,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Demo Tip Box */}
-            <div style={{ background: "rgba(244, 63, 94, 0.05)", border: "1px dashed rgba(244, 63, 94, 0.2)", padding: "10px 14px", borderRadius: "14px", fontSize: "11px", color: "var(--text-muted)", marginBottom: "20px", lineHeight: "1.4" }}>
-              💡 <strong>Tip Demo:</strong> Anda bisa mendaftar akun baru, atau masuk dengan email <strong>admin@gmail.com</strong> dan password <strong>admin123</strong>.
-            </div>
+
 
             <form onSubmit={handleSubmit}>
               {/* Email */}

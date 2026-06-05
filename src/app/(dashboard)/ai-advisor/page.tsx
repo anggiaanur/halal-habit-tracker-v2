@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Sparkles, Send, Bot, User, Trash2, Heart, HelpCircle, BookOpen, Smile, ChevronRight } from "lucide-react";
+import { Sparkles, Send, Bot, User, Trash2, Heart, Smile, ChevronRight } from "lucide-react";
 
 interface Message {
   id: number;
@@ -53,11 +53,13 @@ export default function AIAdvisor() {
   }, [messages, isTyping]);
 
   useEffect(() => {
-    setMounted(true);
-    const savedMessages = localStorage.getItem("syariah-ai-messages");
-    if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
-    }
+    setTimeout(() => {
+      setMounted(true);
+      const savedMessages = localStorage.getItem("syariah-ai-messages");
+      if (savedMessages) {
+        setMessages(JSON.parse(savedMessages));
+      }
+    }, 0);
   }, []);
 
   const saveMessagesToLocal = (newMsgList: Message[]) => {
@@ -210,21 +212,6 @@ export default function AIAdvisor() {
   };
 
   if (!mounted) return null;
-
-  const formatRupiah = (num: number) => {
-    return "Rp " + new Intl.NumberFormat("id-ID", { maximumFractionDigits: 0 }).format(num);
-  };
-
-  const getTagLabel = (tag: string) => {
-    switch (tag) {
-      case "halal": return "Halal & Tayyib";
-      case "syubhat": return "Syubhat / Riba";
-      case "pokok": return "Kebutuhan Pokok";
-      case "sekunder": return "Kenyamanan";
-      case "boros": return "Boros / Mubazir";
-      default: return tag;
-    }
-  };
 
   return (
     <div className="page-container w-full min-h-screen pb-12">
@@ -611,7 +598,7 @@ export default function AIAdvisor() {
               >
                 <Sparkles className="h-4 w-4" />
                 <div>
-                  <div className="font-bold">Syar'i Expert 💼</div>
+                  <div className="font-bold">Syar&apos;i Expert 💼</div>
                   <div className="text-[9.5px] opacity-80 font-normal">Formal, detail &amp; akademis</div>
                 </div>
               </button>
