@@ -20,6 +20,22 @@ export default function ForgotPassword() {
     setSuccessMsg("");
 
     try {
+      // 1. Intercept mock users and show simulation notice
+      const mockUsersStr = typeof window !== "undefined" ? localStorage.getItem("mock_users") : null;
+      const mockUsers = mockUsersStr ? JSON.parse(mockUsersStr) : [];
+      const isMockAccount = mockUsers.some((u: any) => u.email.toLowerCase() === email.toLowerCase()) || 
+                            email.toLowerCase() === "admin@gmail.com";
+
+      if (isMockAccount) {
+        setTimeout(() => {
+          setSuccessMsg("Simulasi Sukses: Tautan reset password telah dikirim! (Catatan: Ini adalah akun lokal simulasi, sehingga tidak ada email fisik asli yang dikirim) 🌸");
+          setEmail("");
+          setIsLoading(false);
+        }, 1000);
+        return;
+      }
+
+      // 2. Real Supabase reset password
       const isPlaceholder = !process.env.NEXT_PUBLIC_SUPABASE_URL || 
                             process.env.NEXT_PUBLIC_SUPABASE_URL.includes("placeholder");
       
