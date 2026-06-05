@@ -190,11 +190,9 @@ export default function LaporanKeuanganPage() {
     if (globalHtml2pdf) {
       runExport(globalHtml2pdf);
     } else {
-      // Load script dynamically
+      // Load script dynamically from local public folder
       const script = document.createElement("script");
-      script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-      script.crossOrigin = "anonymous";
-      script.integrity = "sha512-GsLlZN/3F2ErC5IfS51RRmC1IQFWddc50XXc3Pr/9WXSLzQsWXYKDKB2GF1nyG4gxhgCOsb7ec/q1MWv50xs+w==";
+      script.src = "/html2pdf.bundle.min.js";
       script.onload = () => {
         const loadedHtml2pdf = (window as Window & { html2pdf?: () => Html2PdfExporter }).html2pdf;
         if (loadedHtml2pdf) {
