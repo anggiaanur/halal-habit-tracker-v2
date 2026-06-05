@@ -397,28 +397,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           {/* Right side */}
           <div className="flex items-center gap-3">
-            {/* Score badge — hidden on very small screens */}
-            <div
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs"
-              style={{
-                background: "rgba(251, 113, 133, 0.05)",
-                border: "1px solid var(--border-lg)",
-              }}
-            >
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-serif font-bold text-rose-800">Skor Halal</span>
-              <span className="font-extrabold text-emerald-700">72</span>
-              <span
-                className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border font-serif"
-                style={{
-                  background: "rgba(4, 120, 87, 0.06)",
-                  borderColor: "rgba(4, 120, 87, 0.18)",
-                  color: "#047857",
-                }}
-              >
-                Consistent
-              </span>
-            </div>
+
 
             {/* Profile Dropdown */}
             <div style={{ position: "relative" }}>
@@ -530,23 +509,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                     <div style={{ height: "1px", background: "#F5E0EA" }} />
 
-                    {/* Skor Halal Status Tracker */}
-                    <div
-                      style={{
-                        background: "rgba(244, 63, 94, 0.03)",
-                        border: "1px dashed rgba(244, 63, 94, 0.15)",
-                        borderRadius: "14px",
-                        padding: "12px",
-                      }}
-                    >
-                      <p style={{ fontSize: "10px", fontWeight: 800, textTransform: "uppercase", color: "#FB7185", letterSpacing: "0.05em", margin: "0 0 6px 0", fontFamily: "var(--font-playfair-display), serif" }}>
-                        Keistiqomahan Harian 🎀
-                      </p>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontSize: "12px", fontWeight: 600, color: "#8a6070" }}>Skor Halal:</span>
-                        <span style={{ fontSize: "12px", fontWeight: 800, color: "#047857" }}>72 (Consistent)</span>
-                      </div>
-                    </div>
+
 
                     {/* Actions */}
                     <div style={{ display: "flex", flexDirection: "column" }}>

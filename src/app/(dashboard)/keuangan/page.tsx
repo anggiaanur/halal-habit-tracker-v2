@@ -67,10 +67,11 @@ export default function KeuanganSyariahPage() {
       if (user) {
         setUserId(user.id);
         
-        // Load transactions from Supabase
+        // Load transactions from Supabase (filtered by user_id)
         const { data: txData, error: txError } = await supabase
           .from("syariah_transactions")
           .select("*")
+          .eq("user_id", user.id)
           .order("created_at", { ascending: false });
         if (txData && txData.length > 0) {
           setTransactions(txData.map(t => ({
@@ -87,10 +88,11 @@ export default function KeuanganSyariahPage() {
           console.error("Error loading transactions:", txError);
         }
 
-        // Load debts from Supabase
+        // Load debts from Supabase (filtered by user_id)
         const { data: debtData, error: debtError } = await supabase
           .from("syariah_debts")
           .select("*")
+          .eq("user_id", user.id)
           .order("created_at", { ascending: false });
         if (debtData && debtData.length > 0) {
           setDebts(debtData.map(d => ({

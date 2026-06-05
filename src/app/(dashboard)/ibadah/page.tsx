@@ -157,7 +157,7 @@ export default function AdaptiveIbadahPage() {
           .from("syariah_user_states")
           .select("*")
           .eq("user_id", user.id)
-          .single();
+          .maybeSingle();
         if (stateData) {
           if (stateData.khatam_current_page !== null) setKhatamCurrentPage(stateData.khatam_current_page);
           if (stateData.water_today !== null) setWaterCount(stateData.water_today);
@@ -208,12 +208,13 @@ export default function AdaptiveIbadahPage() {
         return;
       }
 
-      // Load day-specific logs from Supabase
+      // Load day-specific logs from Supabase (filtered by user_id)
       const { data: logData } = await supabase
         .from("syariah_ibadah_logs")
         .select("*")
+        .eq("user_id", userId)
         .eq("date", dateKey)
-        .single();
+        .maybeSingle();
 
       if (logData) {
         // Checked Amalans

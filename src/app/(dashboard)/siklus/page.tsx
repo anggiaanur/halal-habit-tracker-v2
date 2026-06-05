@@ -38,19 +38,20 @@ export default function JurnalSiklusPage() {
           .from("syariah_user_states")
           .select("*")
           .eq("user_id", user.id)
-          .single();
+          .maybeSingle();
         if (stateData) {
           if (stateData.cycle_last_period_start !== null) setLastPeriodStart(stateData.cycle_last_period_start);
           if (stateData.cycle_length !== null) setCycleLength(stateData.cycle_length);
           if (stateData.cycle_period_length !== null) setPeriodLength(stateData.cycle_period_length);
         }
 
-        // Load today's cycle amalan logs from Supabase
+        // Load today's cycle amalan logs from Supabase (filtered by user_id)
         const { data: logData } = await supabase
           .from("syariah_ibadah_logs")
           .select("checked_amalans")
+          .eq("user_id", user.id)
           .eq("date", "siklus-2026-06-01")
-          .single();
+          .maybeSingle();
         if (logData && logData.checked_amalans) {
           const checkedSet = new Set(logData.checked_amalans);
           setAmalans(prev => prev.map((a, idx) => ({

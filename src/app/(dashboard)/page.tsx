@@ -80,10 +80,11 @@ export default function Dashboard() {
         const supabaseClient = createClient();
         const { data: { user } } = await supabaseClient.auth.getUser();
         if (user) {
-          // Fetch transactions from Supabase
+          // Fetch transactions from Supabase (filtered by user_id)
           const { data: txData } = await supabaseClient
             .from("syariah_transactions")
             .select("*")
+            .eq("user_id", user.id)
             .order("created_at", { ascending: false });
           if (txData) {
             setTransactions(txData.map((t: { description: string; amount: number | string; type: string; tag: string; date: string }) => ({
@@ -100,19 +101,20 @@ export default function Dashboard() {
             .from("syariah_user_states")
             .select("*")
             .eq("user_id", user.id)
-            .single();
+            .maybeSingle();
           if (userState) {
             if (userState.cycle_last_period_start) setLastStart(`${userState.cycle_last_period_start} Juni 2026`);
             if (userState.cycle_length) setCycleLength(userState.cycle_length);
             if (userState.cycle_period_length) setPeriodDuration(userState.cycle_period_length);
           }
 
-          // Fetch amalan checklist logs from Supabase
+          // Fetch amalan checklist logs from Supabase (filtered by user_id)
           const { data: logData } = await supabaseClient
             .from("syariah_ibadah_logs")
             .select("checked_amalans")
+            .eq("user_id", user.id)
             .eq("date", "siklus-2026-06-01")
-            .single();
+            .maybeSingle();
           if (logData && logData.checked_amalans) {
             const checkedSet = new Set(logData.checked_amalans);
             const arr = new Array(10).fill(false).map((_, idx) => checkedSet.has(`amalan-${idx}`));
