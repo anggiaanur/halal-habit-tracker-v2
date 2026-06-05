@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { Printer, Download, Calendar, Activity, Check, AlertCircle } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { getLocalItem } from "@/lib/storage";
 
 interface Transaction {
-  id: number;
+  id: string | number;
   desc: string;
   amount: number;
   type: "pemasukan" | "pengeluaran";
@@ -15,7 +17,7 @@ interface Transaction {
 }
 
 interface Debt {
-  id: number;
+  id: string | number;
   person: string;
   amount: number;
   type: "utang" | "piutang";
@@ -35,17 +37,61 @@ export default function LaporanKeuanganPage() {
   const nisabZakat = 85 * hargaEmasPerGram; // Rp 123.250.000
 
   useEffect(() => {
-    setTimeout(() => {
-      setMounted(true);
-      const savedTx = localStorage.getItem("syariah-transactions");
-      if (savedTx) {
-        setTransactions(JSON.parse(savedTx));
+    setTimeout(() => setMounted(true), 0);
+    
+    const loadData = async () => {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Load transactions from Supabase (filtered by user_id)
+        const { data: txData } = await supabase
+          .from("syariah_transactions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+        if (txData) {
+          setTransactions(txData.map(t => ({
+            id: t.id,
+            desc: t.description,
+            amount: Number(t.amount),
+            type: t.type,
+            category: t.category,
+            tag: t.tag,
+            date: t.date,
+            dateKey: t.date_key
+          })));
+        }
+
+        // Load debts from Supabase (filtered by user_id)
+        const { data: debtData } = await supabase
+          .from("syariah_debts")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+        if (debtData) {
+          setDebts(debtData.map(d => ({
+            id: d.id,
+            person: d.person,
+            amount: Number(d.amount),
+            type: d.type,
+            settled: d.settled,
+            date: d.date
+          })));
+        }
+      } else {
+        // Fallback to localStorage
+        const savedTx = getLocalItem("syariah-transactions");
+        if (savedTx) {
+          setTransactions(JSON.parse(savedTx));
+        }
+        const savedDebts = getLocalItem("syariah-debts");
+        if (savedDebts) {
+          setDebts(JSON.parse(savedDebts));
+        }
       }
-      const savedDebts = localStorage.getItem("syariah-debts");
-      if (savedDebts) {
-        setDebts(JSON.parse(savedDebts));
-      }
-    }, 0);
+    };
+    loadData();
   }, []);
 
   if (!mounted) return null;

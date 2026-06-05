@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { TrendingUp, TrendingDown, HelpCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { getLocalItem, setLocalItem, removeLocalItem } from "@/lib/storage";
 
 // ==========================================
 // CONSTANTS & DICTIONARIES
@@ -108,11 +109,11 @@ export default function KeuanganSyariahPage() {
         }
       } else {
         // Fallback to localStorage
-        const savedTx = localStorage.getItem("syariah-transactions");
+        const savedTx = getLocalItem("syariah-transactions");
         if (savedTx) {
           setTransactions(JSON.parse(savedTx));
         }
-        const savedDebts = localStorage.getItem("syariah-debts");
+        const savedDebts = getLocalItem("syariah-debts");
         if (savedDebts) {
           setDebts(JSON.parse(savedDebts));
         }
@@ -186,7 +187,7 @@ export default function KeuanganSyariahPage() {
       };
       const nextList = [newTx, ...transactions];
       setTransactions(nextList);
-      localStorage.setItem("syariah-transactions", JSON.stringify(nextList));
+      setLocalItem("syariah-transactions", JSON.stringify(nextList));
     }
 
     setDesc("");
@@ -207,7 +208,7 @@ export default function KeuanganSyariahPage() {
     } else {
       const nextList = transactions.filter((t) => t.id !== id);
       setTransactions(nextList);
-      localStorage.setItem("syariah-transactions", JSON.stringify(nextList));
+      setLocalItem("syariah-transactions", JSON.stringify(nextList));
     }
   };
 
@@ -258,7 +259,7 @@ export default function KeuanganSyariahPage() {
       };
       const nextList = [...debts, newDebt];
       setDebts(nextList);
-      localStorage.setItem("syariah-debts", JSON.stringify(nextList));
+      setLocalItem("syariah-debts", JSON.stringify(nextList));
     }
 
     setDebtPerson("");
@@ -283,7 +284,7 @@ export default function KeuanganSyariahPage() {
     } else {
       const nextList = debts.map(d => d.id === id ? { ...d, settled: nextSettled } : d);
       setDebts(nextList);
-      localStorage.setItem("syariah-debts", JSON.stringify(nextList));
+      setLocalItem("syariah-debts", JSON.stringify(nextList));
     }
   };
 
@@ -301,7 +302,7 @@ export default function KeuanganSyariahPage() {
     } else {
       const nextList = debts.filter(d => d.id !== id);
       setDebts(nextList);
-      localStorage.setItem("syariah-debts", JSON.stringify(nextList));
+      setLocalItem("syariah-debts", JSON.stringify(nextList));
     }
   };
 
@@ -329,8 +330,8 @@ export default function KeuanganSyariahPage() {
     }
     
     // Always clear local storage fallback
-    localStorage.removeItem("syariah-transactions");
-    localStorage.removeItem("syariah-debts");
+    removeLocalItem("syariah-transactions");
+    removeLocalItem("syariah-debts");
     setTransactions([]);
     setDebts([]);
     setLoading(false);

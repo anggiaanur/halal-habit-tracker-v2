@@ -112,11 +112,21 @@ export default function LoginPage() {
       }
 
       // 4. Fallback to Supabase (if keys are configured)
-      const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password: cleanPassword });
+      const { data: authData, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password: cleanPassword });
       if (error) {
+        if (error.message.toLowerCase().includes("confirm")) {
+          // Bypass email confirmation for UAS demo!
+          localStorage.setItem("mock_user_session", JSON.stringify({ email: cleanEmail, name: cleanEmail.split('@')[0] }));
+          router.push("/");
+          return;
+        }
         setErrorMsg(error.message);
         setIsLoading(false);
       } else {
+        localStorage.setItem("mock_user_session", JSON.stringify({ 
+          email: authData.user?.email || cleanEmail, 
+          name: authData.user?.user_metadata?.full_name || cleanEmail.split('@')[0] 
+        }));
         router.push("/");
       }
     } catch {

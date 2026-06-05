@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getLocalItem, setLocalItem, removeLocalItem } from "@/lib/storage";
 
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function JurnalSiklusPage() {
@@ -61,15 +62,15 @@ export default function JurnalSiklusPage() {
         }
       } else {
         // Fallback to local storage for sliders
-        const savedStart = localStorage.getItem("siklus-lastPeriodStart");
-        const savedLength = localStorage.getItem("siklus-cycleLength");
-        const savedPeriod = localStorage.getItem("siklus-periodLength");
+        const savedStart = getLocalItem("siklus-lastPeriodStart");
+        const savedLength = getLocalItem("siklus-cycleLength");
+        const savedPeriod = getLocalItem("siklus-periodLength");
         if (savedStart) setLastPeriodStart(Number(savedStart));
         if (savedLength) setCycleLength(Number(savedLength));
         if (savedPeriod) setPeriodLength(Number(savedPeriod));
 
         // Fallback to local storage for amalans
-        const savedAmalans = localStorage.getItem("siklus-amalans");
+        const savedAmalans = getLocalItem("siklus-amalans");
         if (savedAmalans) setAmalans(JSON.parse(savedAmalans));
       }
     };
@@ -86,12 +87,12 @@ export default function JurnalSiklusPage() {
       }, { onConflict: "user_id" });
     } else {
       if (start === null) {
-        localStorage.removeItem("siklus-lastPeriodStart");
+        removeLocalItem("siklus-lastPeriodStart");
       } else {
-        localStorage.setItem("siklus-lastPeriodStart", start.toString());
+        setLocalItem("siklus-lastPeriodStart", start.toString());
       }
-      localStorage.setItem("siklus-cycleLength", cycle.toString());
-      localStorage.setItem("siklus-periodLength", period.toString());
+      setLocalItem("siklus-cycleLength", cycle.toString());
+      setLocalItem("siklus-periodLength", period.toString());
     }
   };
 
@@ -109,7 +110,7 @@ export default function JurnalSiklusPage() {
         checked_amalans: checkedIds
       }, { onConflict: "user_id,date" });
     } else {
-      localStorage.setItem("siklus-amalans", JSON.stringify(updatedAmalans));
+      setLocalItem("siklus-amalans", JSON.stringify(updatedAmalans));
     }
   };
 

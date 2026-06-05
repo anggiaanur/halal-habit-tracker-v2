@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Sparkles, Send, Bot, User, Trash2, Heart, Smile, ChevronRight } from "lucide-react";
+import { getLocalItem, setLocalItem } from "@/lib/storage";
 
 interface Message {
   id: number;
@@ -55,7 +56,7 @@ export default function AIAdvisor() {
   useEffect(() => {
     setTimeout(() => {
       setMounted(true);
-      const savedMessages = localStorage.getItem("syariah-ai-messages");
+      const savedMessages = getLocalItem("syariah-ai-messages");
       if (savedMessages) {
         setMessages(JSON.parse(savedMessages));
       }
@@ -64,7 +65,7 @@ export default function AIAdvisor() {
 
   const saveMessagesToLocal = (newMsgList: Message[]) => {
     setMessages(newMsgList);
-    localStorage.setItem("syariah-ai-messages", JSON.stringify(newMsgList));
+    setLocalItem("syariah-ai-messages", JSON.stringify(newMsgList));
   };
 
   const handleSendQuery = (queryText: string) => {

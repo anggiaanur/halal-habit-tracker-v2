@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getLocalItem, setLocalItem } from "@/lib/storage";
 import {
   TrendingUp, TrendingDown,
   CheckCircle2, Sparkles, ArrowUpRight,
@@ -61,70 +62,65 @@ export default function Dashboard() {
 
   useEffect(() => {
     const loadData = async () => {
-      // 1. Check if mock session exists
-      const mockSessionStr = localStorage.getItem("mock_user_session");
-      const isBypassed = localStorage.getItem("dev_bypass") === "true";
+      const supabaseClient = createClient();
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      
+      if (user) {
+        // Fetch transactions from Supabase (filtered by user_id)
+        const { data: txData } = await supabaseClient
+          .from("syariah_transactions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+        if (txData) {
+          setTransactions(txData.map((t: { description: string; amount: number | string; type: string; tag: string; date: string }) => ({
+            desc: t.description,
+            amount: Number(t.amount),
+            type: t.type === "pemasukan" ? "in" : "out",
+            tag: t.tag,
+            date: t.date
+          })));
+        }
+
+        // Fetch cycle state from Supabase
+        const { data: userState } = await supabaseClient
+          .from("syariah_user_states")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (userState) {
+          if (userState.cycle_last_period_start) setLastStart(`${userState.cycle_last_period_start} Juni 2026`);
+          if (userState.cycle_length) setCycleLength(userState.cycle_length);
+          if (userState.cycle_period_length) setPeriodDuration(userState.cycle_period_length);
+        }
+
+        // Fetch amalan checklist logs from Supabase (filtered by user_id)
+        const { data: logData } = await supabaseClient
+          .from("syariah_ibadah_logs")
+          .select("checked_amalans")
+          .eq("user_id", user.id)
+          .eq("date", "siklus-2026-06-01")
+          .maybeSingle();
+        if (logData && logData.checked_amalans) {
+          const checkedSet = new Set(logData.checked_amalans);
+          const arr = new Array(10).fill(false).map((_, idx) => checkedSet.has(`amalan-${idx}`));
+          setCheckedAmalans(arr);
+        }
+        return;
+      }
       
       // Load cycle settings from localStorage
-      const savedStart = localStorage.getItem("siklus-lastPeriodStart");
-      const savedLength = localStorage.getItem("siklus-cycleLength");
-      const savedPeriod = localStorage.getItem("siklus-periodLength");
-      const savedLoggedCycles = localStorage.getItem("siklus-logged-cycles");
+      const savedStart = getLocalItem("siklus-lastPeriodStart");
+      const savedLength = getLocalItem("siklus-cycleLength");
+      const savedPeriod = getLocalItem("siklus-periodLength");
+      const savedLoggedCycles = getLocalItem("siklus-logged-cycles");
       
       if (savedStart) setLastStart(`${savedStart} Juni 2026`);
       if (savedLength) setCycleLength(Number(savedLength));
       if (savedPeriod) setPeriodDuration(Number(savedPeriod));
       if (savedLoggedCycles) setLoggedCycles(JSON.parse(savedLoggedCycles));
       
-      if (!mockSessionStr && !isBypassed) {
-        const supabaseClient = createClient();
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (user) {
-          // Fetch transactions from Supabase (filtered by user_id)
-          const { data: txData } = await supabaseClient
-            .from("syariah_transactions")
-            .select("*")
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: false });
-          if (txData) {
-            setTransactions(txData.map((t: { description: string; amount: number | string; type: string; tag: string; date: string }) => ({
-              desc: t.description,
-              amount: Number(t.amount),
-              type: t.type === "pemasukan" ? "in" : "out",
-              tag: t.tag,
-              date: t.date
-            })));
-          }
-
-          // Fetch cycle state from Supabase
-          const { data: userState } = await supabaseClient
-            .from("syariah_user_states")
-            .select("*")
-            .eq("user_id", user.id)
-            .maybeSingle();
-          if (userState) {
-            if (userState.cycle_last_period_start) setLastStart(`${userState.cycle_last_period_start} Juni 2026`);
-            if (userState.cycle_length) setCycleLength(userState.cycle_length);
-            if (userState.cycle_period_length) setPeriodDuration(userState.cycle_period_length);
-          }
-
-          // Fetch amalan checklist logs from Supabase (filtered by user_id)
-          const { data: logData } = await supabaseClient
-            .from("syariah_ibadah_logs")
-            .select("checked_amalans")
-            .eq("user_id", user.id)
-            .eq("date", "siklus-2026-06-01")
-            .maybeSingle();
-          if (logData && logData.checked_amalans) {
-            const checkedSet = new Set(logData.checked_amalans);
-            const arr = new Array(10).fill(false).map((_, idx) => checkedSet.has(`amalan-${idx}`));
-            setCheckedAmalans(arr);
-          }
-          return;
-        }
-      }
-      
-      const savedTx = localStorage.getItem("syariah-transactions");
+      const savedTx = getLocalItem("syariah-transactions");
       if (savedTx) {
         setTransactions(JSON.parse(savedTx).map((t: { desc: string; amount: number; type: string; tag: string; date: string }) => ({
           desc: t.desc,
@@ -136,7 +132,7 @@ export default function Dashboard() {
       }
 
       // Fallback to localStorage for amalans
-      const savedAmalans = localStorage.getItem("siklus-amalans");
+      const savedAmalans = getLocalItem("siklus-amalans");
       if (savedAmalans) {
         const parsed = JSON.parse(savedAmalans);
         setCheckedAmalans(parsed.map((a: { done?: boolean }) => !!a.done));
@@ -204,7 +200,7 @@ export default function Dashboard() {
 
     const updatedCycles = [newLog, ...loggedCycles];
     setLoggedCycles(updatedCycles);
-    localStorage.setItem("siklus-logged-cycles", JSON.stringify(updatedCycles));
+    setLocalItem("siklus-logged-cycles", JSON.stringify(updatedCycles));
     setLastStart(formattedDate);
     setNotes("");
     setShowLogModal(false);

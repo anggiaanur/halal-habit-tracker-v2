@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { getLocalItem, setLocalItem } from "@/lib/storage";
 
 // ==========================================
 // STATIC CONSTANTS & DICTIONARIES
@@ -167,6 +168,17 @@ export default function AdaptiveIbadahPage() {
             setTasbihCount(stateData.tasbih_counts[selectedDhikr] || 0);
           }
         }
+      } else {
+        const savedPage = getLocalItem("khatam-current-page");
+        if (savedPage) setKhatamCurrentPage(Number(savedPage));
+        const savedJuz = getLocalItem("khatam-current-juz");
+        if (savedJuz) setKhatamCurrentJuz(Number(savedJuz));
+        const savedTasbihCounts = getLocalItem("tasbih_counts_local");
+        if (savedTasbihCounts) {
+          const parsed = JSON.parse(savedTasbihCounts);
+          setTasbihCounts(parsed);
+          setTasbihCount(parsed[selectedDhikr] || 0);
+        }
       }
     };
     checkUser();
@@ -179,16 +191,16 @@ export default function AdaptiveIbadahPage() {
 
       if (!userId) {
         // Fallback to local storage
-        const savedPhase = localStorage.getItem("ibadah-phase");
+        const savedPhase = getLocalItem("ibadah-phase");
         if (savedPhase) setActivePhase(savedPhase as "suci_penuh" | "haid" | "nifas");
 
-        const savedChecks = localStorage.getItem("ibadah-checked-items");
+        const savedChecks = getLocalItem("ibadah-checked-items");
         if (savedChecks) setCheckedItems(JSON.parse(savedChecks));
 
-        const savedTilawah = localStorage.getItem("ibadah-tilawah-logs");
+        const savedTilawah = getLocalItem("ibadah-tilawah-logs");
         if (savedTilawah) setTilawahLogs(JSON.parse(savedTilawah));
 
-        const savedJournal = localStorage.getItem("ibadah-journal-logs");
+        const savedJournal = getLocalItem("ibadah-journal-logs");
         if (savedJournal) setJournalLogs(JSON.parse(savedJournal));
 
         const keyT = `tasbih-${dateKey}`;
@@ -196,10 +208,10 @@ export default function AdaptiveIbadahPage() {
         const keySedekah = `sedekah-${dateKey}`;
         const keyG = `gratitude-${dateKey}`;
 
-        const savedT = localStorage.getItem(keyT);
-        const savedW = localStorage.getItem(keyW);
-        const savedSedekah = localStorage.getItem(keySedekah);
-        const savedG = localStorage.getItem(keyG);
+        const savedT = getLocalItem(keyT);
+        const savedW = getLocalItem(keyW);
+        const savedSedekah = getLocalItem(keySedekah);
+        const savedG = getLocalItem(keyG);
 
         setTasbihCount(savedT ? parseInt(savedT) : 0);
         setWaterCount(savedW ? parseInt(savedW) : 0);
@@ -296,7 +308,7 @@ export default function AdaptiveIbadahPage() {
 
   const handlePhaseChange = (phase: "suci_penuh" | "haid" | "nifas") => {
     setActivePhase(phase);
-    localStorage.setItem("ibadah-phase", phase);
+    setLocalItem("ibadah-phase", phase);
   };
 
   const toggleAmalan = async (itemId: string) => {
@@ -321,7 +333,7 @@ export default function AdaptiveIbadahPage() {
           journal_text: journalText
         }, { onConflict: "user_id,date" });
     } else {
-      localStorage.setItem("ibadah-checked-items", JSON.stringify(nextChecks));
+      setLocalItem("ibadah-checked-items", JSON.stringify(nextChecks));
     }
   };
 
@@ -374,7 +386,7 @@ export default function AdaptiveIbadahPage() {
     } else {
       const fullLogs = [newLog, ...tilawahLogs];
       setTilawahLogs(fullLogs);
-      localStorage.setItem("ibadah-tilawah-logs", JSON.stringify(fullLogs));
+      setLocalItem("ibadah-tilawah-logs", JSON.stringify(fullLogs));
     }
 
     setStartAyah("");
@@ -411,7 +423,7 @@ export default function AdaptiveIbadahPage() {
     } else {
       const nextLogs = tilawahLogs.filter((log) => log.id !== id);
       setTilawahLogs(nextLogs);
-      localStorage.setItem("ibadah-tilawah-logs", JSON.stringify(nextLogs));
+      setLocalItem("ibadah-tilawah-logs", JSON.stringify(nextLogs));
     }
   };
 
@@ -456,7 +468,7 @@ export default function AdaptiveIbadahPage() {
     } else {
       const nextLogs = [newLog, ...nextJournals];
       setJournalLogs(nextLogs);
-      localStorage.setItem("ibadah-journal-logs", JSON.stringify(nextLogs));
+      setLocalItem("ibadah-journal-logs", JSON.stringify(nextLogs));
       setJournalText("");
     }
   };
@@ -475,8 +487,8 @@ export default function AdaptiveIbadahPage() {
           tasbih_counts: updatedCounts
         }, { onConflict: "user_id" });
     } else {
-      localStorage.setItem(`tasbih-${dateKey}`, nextVal.toString());
-      localStorage.setItem(`tasbih_counts_local`, JSON.stringify(updatedCounts));
+      setLocalItem(`tasbih-${dateKey}`, nextVal.toString());
+      setLocalItem(`tasbih_counts_local`, JSON.stringify(updatedCounts));
     }
   };
 
@@ -493,14 +505,14 @@ export default function AdaptiveIbadahPage() {
           tasbih_counts: updatedCounts
         }, { onConflict: "user_id" });
     } else {
-      localStorage.setItem(`tasbih-${dateKey}`, "0");
-      localStorage.setItem(`tasbih_counts_local`, JSON.stringify(updatedCounts));
+      setLocalItem(`tasbih-${dateKey}`, "0");
+      setLocalItem(`tasbih_counts_local`, JSON.stringify(updatedCounts));
     }
   };
 
   const changeDhikr = (val: string) => {
     setSelectedDhikr(val);
-    localStorage.setItem(`dhikr-${dateKey}`, val);
+    setLocalItem(`dhikr-${dateKey}`, val);
     const savedCount = tasbihCounts[val] || 0;
     setTasbihCount(savedCount);
   };
@@ -520,14 +532,14 @@ export default function AdaptiveIbadahPage() {
           water_today: nextVal
         }, { onConflict: "user_id" });
     } else {
-      localStorage.setItem(`water-${dateKey}`, nextVal.toString());
+      setLocalItem(`water-${dateKey}`, nextVal.toString());
     }
   };
 
   const updateKhatamJuz = (val: number) => {
     const cleanVal = Math.max(1, Math.min(30, val));
     setKhatamCurrentJuz(cleanVal);
-    localStorage.setItem("khatam-current-juz", cleanVal.toString());
+    setLocalItem("khatam-current-juz", cleanVal.toString());
   };
 
   const updateKhatamPage = async (val: number) => {
@@ -542,7 +554,7 @@ export default function AdaptiveIbadahPage() {
           khatam_current_page: cleanVal
         }, { onConflict: "user_id" });
     } else {
-      localStorage.setItem("khatam-current-page", cleanVal.toString());
+      setLocalItem("khatam-current-page", cleanVal.toString());
     }
   };
 
@@ -564,7 +576,7 @@ export default function AdaptiveIbadahPage() {
           checked_gratitudes: Object.keys(updated).filter(k => updated[k])
         }, { onConflict: "user_id,date" });
     } else {
-      localStorage.setItem(`gratitude-${dateKey}`, JSON.stringify(updated));
+      setLocalItem(`gratitude-${dateKey}`, JSON.stringify(updated));
     }
   };
 
@@ -580,7 +592,7 @@ export default function AdaptiveIbadahPage() {
           sedekah_total: nextVal
         }, { onConflict: "user_id" });
     } else {
-      localStorage.setItem(`sedekah-${dateKey}`, nextVal.toString());
+      setLocalItem(`sedekah-${dateKey}`, nextVal.toString());
     }
   };
 
@@ -595,7 +607,7 @@ export default function AdaptiveIbadahPage() {
           sedekah_total: 0
         }, { onConflict: "user_id" });
     } else {
-      localStorage.setItem(`sedekah-${dateKey}`, "0");
+      setLocalItem(`sedekah-${dateKey}`, "0");
     }
   };
 
